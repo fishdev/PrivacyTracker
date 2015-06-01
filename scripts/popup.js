@@ -16,6 +16,7 @@ var HistoryDataName = background.HistoryDataName;
 var PTOptions;
 var PTOptionsName = "PrivacyOptions";
 var Websites;
+var showTutorial = background.showTutorial;
 var TrackingHeaders = {};
 var TrackingHeaderArray;
 var AdvertisingHeaders = {};
@@ -714,6 +715,15 @@ function switchView(type) {
     }, false);
     colorSortNum(sortitems[i].id);
   }
+  
+  // Show tutorial if necessary
+  if(showTutorial) {
+    showTutorial();
+  }
+}
+
+function showTutorial() {
+  null;
 }
 
 function colorSortNum(categoryid) {
