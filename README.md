@@ -12,7 +12,7 @@ PrivacyTracker is a user-centered browser plugin to help you understand online t
 1. Download the [PrivacyTracker ZIP](https://github.com/fishdev/PrivacyTracker/zipball/master)
 2. Extract the ZIP file
 2. Open Google Chrome
-2. Go to [chrome://extensions](chrome://extensions).
+2. Go to [chrome://extensions](chrome://extensions)
 3. In the upper-right hand corner, click "Developer mode"
 4. Click "Load unpacked extension..."
 5. Navigate to where you extracted the ZIP and click "OK"
