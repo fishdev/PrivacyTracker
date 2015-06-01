@@ -7,6 +7,7 @@ var BlockedData;
 var HistoryDataName = "PrivacyHistory";
 var HistoryData;
 var CurrentTab;
+var showTutorial;
 var count = -1;
 
 chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
@@ -34,6 +35,9 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
         createData(BlockedDataName);
         createData(HistoryDataName);
         createOptions("PrivacyOptions");
+        showTutorial = true;
+      } else {
+      	showTutorial = false;
       }
       
       // Advance tracker assignment count
