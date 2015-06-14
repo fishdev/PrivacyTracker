@@ -57,7 +57,7 @@ function getStarted() {
     CurrentTab = tab;
     CurrentPage = background.getWebsiteData(background.getDomain(CurrentTab.url));
   });
-  
+
   // Get extension, blocked, and history data
   chrome.storage.local.get(ExtensionDataName, function(r) {
     ExtensionData = r[ExtensionDataName];
@@ -80,7 +80,7 @@ function getStarted() {
   chrome.storage.sync.get(PTOptionsName, function(r) {
     PTOptions = r["PrivacyOptions"];
     console.log("Options retrieved.");
-    
+
     // Load websites JSON and everything else
     loadWebsites(function(response) {
       Websites = JSON.parse(response);
@@ -90,10 +90,10 @@ function getStarted() {
       // Check and log data
       if(ExtensionData!=null && HistoryData!=null && BlockedData!=null && TrackerData!=null && Websites!=null && PTOptions!=null) {
         console.log("All data fetched successfully!");
-        
+
         // Get headers
         getHeaders();
-        
+
         // Get data for each header category
         TrackingHeaderArray = showHeaders(TrackingHeaders, "to external tracking services.", "There are no external websites tracking your visit to this page.", "tracking");
         AdvertisingHeaderArray = showHeaders(AdvertisingHeaders, "for this page's ads.", "This page doesn't have ads from external sites.", "advertising");
@@ -102,7 +102,7 @@ function getStarted() {
         ImageHeaderArray = showHeaders(ImageHeaders, "to external websites for this page's images.", "This page doesn't get its images from any external sources.", "contentimages");
         ScriptHeaderArray = showHeaders(ScriptHeaders, "to external websites for this page's scripts.", "This page doesn't get its scripts content from any external sources.", "contentscripts");
         StylesheetHeaderArray = showHeaders(StylesheetHeaders, "to external websites for this page's layout.", "This page doesn't get its layout from any external sources.", "contentstylesheets");
-        
+
         // Display page
         document.body.style.padding = 0;
         switchCurrent();
@@ -134,11 +134,11 @@ window.addEventListener("load", function() {
   document.getElementById("tab-current").addEventListener("click", switchCurrent, false);
   document.getElementById("tab-history").addEventListener("click", switchHistory, false);
   document.getElementById("tab-overview").addEventListener("click", switchOverview, false);
-  
+
   document.getElementById("link-help").addEventListener("click", switchHelp, false);
   document.getElementById("link-options").addEventListener("click", switchOptions, false);
   document.getElementById("link-about").addEventListener("click", switchAbout, false);
-  
+
   getGoing();
 }, false);
 
@@ -179,7 +179,7 @@ function showHistory() {
     document.body.innerHTML = "<div id='error'><span class='title'><b>Just A Moment...</b></span><img class='icon' src='../images/info.png' align=right><br /><br /><span class='message'>We're still setting things up for you. Please keep browsing and try again after a few more pages.</span></div><img class='loadericon' src='../images/loading.gif'>";
   } else if(!PTOptions.log) {
     var historyHTML = "<div id='history'><span id='title-history' class='title'>Browsing History</span><br />You've Disabled This</div><div id='scroller'><div style='padding: 10px; font-size: 11pt;'>You've disabled logging the pages you visit. You won't be able to view the trackers for each page in your browsing history until you enable history logging in Options.</div></div>";
-    
+
     // Display historyHTML
     document.getElementById("content").innerHTML = historyHTML;
     document.getElementById("scroller").style.height = "446px";
@@ -188,9 +188,9 @@ function showHistory() {
     var startMonth = parseMonth(HistoryData[HistoryData.length-1].month);
     var startDay = HistoryData[HistoryData.length-1].day;
     var startYear = HistoryData[HistoryData.length-1].year;
-  
+
     var historyHTML = "<div id='history'><span id='title-history' class='title'>Browsing History</span><br />Since " + startWeekday + ", " + startMonth + " " + startDay + ", " + startYear + ".</div><div id='scroller'>";
-  
+
     for(i=HistoryData.length-1; i>=0; i--) {
       var pageUrl = HistoryData[i].url;
       var pageTitle = HistoryData[i].title;
@@ -202,12 +202,12 @@ function showHistory() {
       var pageWeekday = parseWeekday(HistoryData[i].weekday);
       var pageMonth = parseMonth(HistoryData[i].month);
       var pageYear = HistoryData[i].year;
-      
+
       if(pageHour>12) {
         pageHour = pageHour - 12;
         pageTime = "PM";
       }
-      
+
       if(pageUrl.length>53) {
         pageUrl = pageUrl.substring(0, 50) + "...";
       }
@@ -217,20 +217,20 @@ function showHistory() {
 	  if(pageIcon=="" || pageIcon==null) {
 	    pageIcon = "../images/page.png";
       }
-      
+
       historyHTML += "<div id='history" + i + "' class='history'><div class='arrow'>&#8594</div><img class='icon' src='" + pageIcon + "' align=left></img><span class='title'>" + pageTitle + "</span><br />" + pageUrl + "<br />" + "Viewed on " + pageWeekday + ", " + pageMonth + " " + pageDay + ", " + pageYear + " at " + pageHour + ":" + pageMinute + " " + pageTime + "</div>";
     }
-    
+
     historyHTML += "<center>" + HistoryData.length + " item";
     if(HistoryData.length>1 || HistoryData.length==0) {
       historyHTML += "s";
     }
     historyHTML += " in history.</center></div>";
-    
+
     // Display historyHTML
     document.getElementById("content").innerHTML = historyHTML;
     document.getElementById("scroller").style.height = "446px";
-    
+
     // Bind history entries
     var historyitems = document.getElementsByClassName("history");
     for(j=0; j<historyitems.length; j++) {
@@ -267,7 +267,7 @@ function showOverview() {
       // Get list of trackers
       getTrackers();
     }
-    
+
     // Generate HTML from list of trackers
     var overviewHTML = "<div id='overview'><span id='title-overview' class='title'>" + Object.keys(SortedTrackers).length + " Website";
     if(Object.keys(SortedTrackers).length==1) {
@@ -282,7 +282,7 @@ function showOverview() {
       overviewHTML += " total pages ";
     }
     overviewHTML += "you've visited</div><div id='scroller'><span class='overviewtrackerlist'>";
-    
+
     var k = 0;
     // Create listing for each tracker
     for(var tracker in SortedTrackers) {
@@ -299,43 +299,43 @@ function showOverview() {
         }
       };
       xhr.send(null);
-      
+
       if(trackerfavicon=="" || trackerfavicon==null || trackerfaviconsize==726) {
         trackerfavicon = "../images/page.png";
       }
-      
+
       // Check if first tracker to be displayed
       var topTracker = "";
       if(k==0) {
         topTracker = "-top"
         k++;
       }
-      
+
       // Check if blocked
       var colorTracker = "";
       if(BlockedData.indexOf(SortedTrackers[tracker].domains[0])>-1) {
         colorTracker = " style='color: gray'";
       }
-      
+
       // Add domain entry
       overviewHTML += "<div class='tracker" + topTracker + "' id='" + tracker + "-entry'><span" + colorTracker + "><img class='icon' src='" + trackerfavicon + "' align=left><b>" + tracker + "</b><br />";
-      
+
       // Add other tracked pages
       overviewHTML += "Knows you visited " + SortedTrackers[tracker].trackedwebsites.length + " website";
       if(SortedTrackers[tracker].trackedwebsites.length>1) {
         overviewHTML += "s";
       }
       overviewHTML += "</span>"
-      
+
       // Tidy up tracker entry
       overviewHTML += "<span id='" + tracker + "-entry-arrow' class='arrow-right-r'></span></div>";
     }
-    
+
     overviewHTML += "</span></div>";
-    
+
     document.getElementById("content").innerHTML = overviewHTML;
     document.getElementById("scroller").style.height = "446px";
-    
+
     // Bind tracker entries
     var trackeritems = document.getElementsByClassName("tracker");
     for(i=0; i<trackeritems.length; i++) {
@@ -354,24 +354,24 @@ function showOverview() {
 
 function showTracker(trackerid) {
   var trackername = trackerid.substring(0, trackerid.lastIndexOf("-"));
-  
+
   // Change arrow style and show details
   var trackerHTML = "";
   var trackerarrow = document.getElementById(trackerid + "-arrow").className;
   if(trackerarrow=="arrow-right-r") {
     // Shift arrow to down
     document.getElementById(trackerid + "-arrow").className = "arrow-down-r";
-    
+
     // Gather information
     trackerHTML += "<div id='" + trackername + "-info' class='trackerinfo'>";
-    
+
     // Add on-off switch
     trackerHTML += "<span id='" + trackername + "switchcontainer' class='switchcontainer'><div class='onoffswitch'><input type='checkbox' name='onoffswitch' class='onoffswitch-checkbox' id='" + trackername + "switch'";
     if(BlockedData.indexOf(SortedTrackers[trackername].domains[0])==-1) {
       trackerHTML += " checked";
     }
     trackerHTML += "><label class='onoffswitch-label' for='" + trackername + "switch'><span class='onoffswitch-inner'></span><span class='onoffswitch-switch'></span></label></div></span>";
-    
+
     // Add tracker name
     var domaindata = background.getWebsiteData(SortedTrackers[trackername].domains[0]);
     var domainname = trackername;
@@ -380,25 +380,25 @@ function showTracker(trackerid) {
       domainname = domaindata.ALEXA.DMOZ.SITE["@attributes"].TITLE;
       domaindescription = domaindata.ALEXA.DMOZ.SITE["@attributes"].DESC;
     }
-    
+
     // Get user-centered data
     var domaintracked = SortedTrackers[trackername].trackedwebsites;
     var domaininterests = getTrackedInterests(domaintracked);
-    
+
     // Generate HTML based on data
     if(domaintracked!="" && domaintracked!=null) {
       trackerHTML += domainname + " knows that you visited:<ul>";
       for(i=0; i<domaintracked.length; i++) {
         var today = new Date();
         trackerHTML += "<li><b><span title='" + HistoryData[domaintracked[i]].url + "'>" + background.getDomain(HistoryData[domaintracked[i]].url) + "</span></b>, which you visited ";
-        
+
         var pageTime = "AM";
         var pageHour = HistoryData[domaintracked[i]].hour
         if(pageHour>12) {
           pageHour = pageHour - 12;
           pageTime = "PM";
         }
-        
+
         if(today.getDate()==HistoryData[domaintracked[i]].day && today.getMonth()==HistoryData[domaintracked[i]].month && today.getFullYear()==HistoryData[domaintracked[i]].year) {
           trackerHTML += "earlier today";
         } else if(today.getDate()==(HistoryData[domaintracked[i]].day + 1) && today.getMonth()==HistoryData[domaintracked[i]].month && today.getFullYear()==HistoryData[domaintracked[i]].year) {
@@ -406,7 +406,7 @@ function showTracker(trackerid) {
         } else {
           trackerHTML += "on " + parseWeekday(HistoryData[domaintracked[i]].weekday) + ", " + parseMonth(HistoryData[domaintracked[i]].month) + " " + HistoryData[domaintracked[i]].day + ", " + HistoryData[domaintracked[i]].year + " at " + pageHour + ":" + HistoryData[domaintracked[i]].minute + " " + pageTime;
         }
-        
+
         trackerHTML += "</li>";
       }
       trackerHTML += "</ul>";
@@ -425,7 +425,7 @@ function showTracker(trackerid) {
       }
       trackerHTML += "</ul>";
     }
-    
+
     // Add description if possible
     for(k=0; k<SortedTrackers[trackername].domains.length; k++) {
       domaindata = background.getWebsiteData(SortedTrackers[trackername].domains[k]);
@@ -437,7 +437,7 @@ function showTracker(trackerid) {
         domaindata = background.getWebsiteData(SortedTrackers[trackername].domains[0]);
       }
     }
-    
+
     // Add country base if possible
     for(k=0; k<SortedTrackers[trackername].domains.length; k++) {
       domaindata = background.getWebsiteData(SortedTrackers[trackername].domains[k]);
@@ -450,11 +450,11 @@ function showTracker(trackerid) {
         domaindata = background.getWebsiteData(SortedTrackers[trackername].domains[0]);
       }
     }
-    
+
     // Display expanded tracker details
     trackerHTML += "</div>";
     document.getElementById(trackerid).outerHTML += trackerHTML;
-    
+
     // Bind domains for categories
     var trackeritems = document.getElementsByClassName("tracker");
     for(i=0; i<trackeritems.length; i++) {
@@ -468,7 +468,7 @@ function showTracker(trackerid) {
         showTracker(this.id);
       }, false);
     }
-    
+
     // Bind switch
     document.getElementById(trackername + "switch").addEventListener("click", function() {
       // Add or remove from blacklist of domains
@@ -481,13 +481,13 @@ function showTracker(trackerid) {
           BlockedData[BlockedData.length] = SortedTrackers[trackername].domains[j];
         }
       }
-      
+
       // Push new blacklist of domains
       background.pushData(BlockedDataName, BlockedData, "local", "Blocks saved.");
     }, false);
   } else {
     document.getElementById(trackerid + "-arrow").className = "arrow-right-r";
-    
+
     // Hide expanded tracker details
     var trackerinfotoremove = document.getElementById(trackername + "-info");
     trackerinfotoremove.parentNode.removeChild(trackerinfotoremove);
@@ -500,14 +500,14 @@ function getTrackers() {
     // Take the domain from this header and sort it as a tracker
     sortTracker(i);
   }
-  
+
   // Sort trackers by number of tracked requests
   var sortable = [];
   for(var tracker in SortedTrackersTmp) {
     sortable.push([tracker, SortedTrackersTmp[tracker].trackedwebsites.length]);
   }
   sortable.sort(function(a, b) {return a[1] - b[1]});
-  
+
   // Use sorted list to add trackers in order to final tracker list
   for(i=(sortable.length-1); i>=0; i--) {
     SortedTrackers[sortable[i][0]] = SortedTrackersTmp[sortable[i][0]];
@@ -516,7 +516,7 @@ function getTrackers() {
 
 function sortTracker(i) {
   var trackertitle = getTrackerTitle(i);
-  
+
   // Check for errors (empty or undefined titles)
   if(trackertitle!="undefined" && trackertitle!="" && trackertitle!=null && trackertitle!="null") {
     // Check if tracker entry already exists
@@ -530,7 +530,7 @@ function sortTracker(i) {
       SortedTrackersTmp[trackertitle].domains[SortedTrackersTmp[trackertitle].domains.length] = background.getDomain(ExtensionData[i].url);
     }
     // Check if this tracked website is added
-    if(SortedTrackersTmp[trackertitle].trackedwebsites.indexOf(ExtensionData[i].id)==-1) { 
+    if(SortedTrackersTmp[trackertitle].trackedwebsites.indexOf(ExtensionData[i].id)==-1) {
       // If not, add it
       SortedTrackersTmp[trackertitle].trackedwebsites[SortedTrackersTmp[trackertitle].trackedwebsites.length] = ExtensionData[i].id;
     }
@@ -539,7 +539,7 @@ function sortTracker(i) {
 
 function getTrackerTitle(i) {
   var trackertitle = "";
-  
+
   // Start search in website database
   // Main categories in database
   for(domaincategory in Websites) {
@@ -565,7 +565,7 @@ function getTrackerTitle(i) {
       }
     }
   }
-  
+
   // If no matches found, make the tracker name the domain name
   trackertitle = background.getDomain(ExtensionData[i].url);
   return trackertitle;
@@ -598,7 +598,7 @@ function parseWeekday(pageWeekday) {
       pageWeekday = "Sunday";
       break;
   }
-  
+
   return pageWeekday;
 }
 
@@ -641,20 +641,20 @@ function parseMonth(pageMonth) {
       pageMonth = "December";
       break
   }
-  
+
   return pageMonth;
 }
 
 function switchView(type) {
   var viewHTML = "";
   viewHTML += "<div id='scroller'>";
-  
+
   if(type=="category") {
     // Check for nothing
     if((TrackingHeaderArray.count + AdvertisingHeaderArray.count + MainHeaderArray.count + ImageHeaderArray.count + ScriptHeaderArray.count + StylesheetHeaderArray.count)==0) {
       viewHTML += "<div class='checkcirclesurroundings'><center><div class='checkcircle'>&#x2713</div></center><br /><div class='leftofcheckcircle'>There aren't any websites other than <b>" + background.getDomain(CurrentTab.url) + "</b> that know you visited this page and may analyze this information.&nbsp;&nbsp</div></div>";
     }
-    
+
     // Add categories
     if(TrackingHeaderArray.count>0) {
       viewHTML += "<div id='trackers' class='sortitem'><span id='trackersarrow' class='arrow-right'></span>&nbsp<span class='sorttext'><span id='trackersnum' class='sortitemnum'>" + TrackingHeaderArray.count + "</span> Compan";
@@ -697,16 +697,16 @@ function switchView(type) {
       viewHTML += " this page to function properly</span></div>";
     }
   }
-  
+
   viewHTML += "</div>";
-  
+
   // Display view
   document.getElementById("container").innerHTML = viewHTML;
   document.getElementById("scroller").style.height = "485x";
   if(document.getElementById("trackers")!=null && document.getElementById("trackers")!="") {
     document.getElementById("trackers").style.borderTop = "none";
   }
-  
+
   // Bind and color sort items
   var sortitems = document.getElementsByClassName("sortitem");
   for(i=0; i<sortitems.length; i++) {
@@ -715,7 +715,7 @@ function switchView(type) {
     }, false);
     colorSortNum(sortitems[i].id);
   }
-  
+
   // Show tutorial if necessary
   if(showTutorial) {
     showTutorial();
@@ -729,13 +729,12 @@ function showTutorial() {
 function colorSortNum(categoryid) {
   var categoryheadersnum = document.getElementById(categoryid + "num").innerHTML;
   document.getElementById(categoryid + "num").style.fontWeight = "bold";
-  
+
   var redintensity = (categoryheadersnum * 5) + 64;
   if(redintensity > 255) {
     redintensity = 255;
     document.getElementById(categoryid).style.fontWeight = "bold";
   }
-  console.log(redintensity);
   document.getElementById(categoryid).style.color = "rgb(" + redintensity + ", 0, 0)";
 }
 
@@ -745,7 +744,7 @@ function showCurrentSort(sortid) {
   if(sortitemarrow=="arrow-right") {
     document.getElementById(sortid + "arrow").className = "arrow-down";
     var sortHTML = "";
-    
+
     // Perform actions per sort item
     switch(sortid) {
       // Tracking Services
@@ -753,19 +752,19 @@ function showCurrentSort(sortid) {
         // Add trackers description
         sortHTML += "<div id='" + sortid + "info' class='sortinfo'><div class='textdescription'><div class='text'>These are the websites that are connected to this page for the sole purpose of gathering your usage activity and performing analytics on your data.</div></div>" + TrackingHeaderArray.html + "</div>";
         break;
-        
+
       // Advertising
       case "advertising":
         // Add advertising description
         sortHTML += "<div id='" + sortid + "info' class='sortinfo'><div class='textdescription'><div class='text'>These companies are targeting ads at you through this page based on your activity across the web.</div></div>" + AdvertisingHeaderArray.html + "</div>";
         break;
-        
+
       // Social
       case "social":
         // Add social description
         sortHTML += "<div id='" + sortid + "info' class='sortinfo'><div class='textdescription'><div class='text'>These are social networks connected to this page, often so you can like or follow this page.</div></div>" + SocialHeaderArray.html + "</div>";
         break;
-      
+
       // Page Content
       case "pagecontent":
         // Check for nothing
@@ -775,7 +774,7 @@ function showCurrentSort(sortid) {
         // Add pagecontent description
           sortHTML += "<div id='" + sortid + "info' class='sortinfo'><div class='textdescription'><div class='text'>These websites know about your visit to this page because they provide content such as images, layout, and more that makes the page work properly.</div></div>";
         }
-        
+
         // Add pagecontent categories
         if(MainHeaderArray.count>0) {
           sortHTML += "<div id='pagecontentmain' class='sortitem'><span id='pagecontentmainarrow' class='arrow-right'></span>&nbsp<span class='sorttext'><span id='pagecontentmainnum' class='sortitemnum'>" + MainHeaderArray.count + "</span> Website";
@@ -847,15 +846,15 @@ function showCurrentSort(sortid) {
         sortHTML = "<div id='" + sortid + "info' class='sortinfo'>" + StylesheetHeaderArray.html + "</div>";
         break;
     }
-    
+
     // Display expanded information
     document.getElementById(sortid).outerHTML += sortHTML;
-    
+
     // Remove top border of main content if applicable
     if(document.getElementById("pagecontentmain")!="" && document.getElementById("pagecontentmain")!=null) {
       document.getElementById("pagecontentmain").style.borderTop = "none";
     }
-    
+
     // Bind and color sort items
     var sortitems = document.getElementsByClassName("sortitem");
     for(i=0; i<sortitems.length; i++) {
@@ -864,7 +863,7 @@ function showCurrentSort(sortid) {
       }, false);
       colorSortNum(sortitems[i].id);
     }
-    
+
     // Bind domains for categories
     var trackeritems = document.getElementsByClassName("tracker");
     for(i=0; i<trackeritems.length; i++) {
@@ -880,7 +879,7 @@ function showCurrentSort(sortid) {
     }
   } else {
     document.getElementById(sortid + "arrow").className = "arrow-right";
-    
+
     // Hide extended information
     var sortiteminfotoremove = document.getElementById(sortid + "info");
     sortiteminfotoremove.parentNode.removeChild(sortiteminfotoremove);
@@ -891,7 +890,7 @@ function showCurrentTracker(typedomain) {
   // Get category and URL (really just title) from typedomain
   var domainbaseurl = typedomain.substring(0, typedomain.lastIndexOf("-"));
   var domaincategory = typedomain.substring(typedomain.lastIndexOf("-") + 1, typedomain.length);
-  
+
   // Get appropriate category headers with domains and URLs
   var headerstouse;
   switch(domaincategory) {
@@ -917,24 +916,24 @@ function showCurrentTracker(typedomain) {
       headerstouse = StylesheetHeaders;
       break;
   }
-  
+
   // Change arrow style and show details
   var trackerHTML = "";
   var trackerarrow = document.getElementById(typedomain + "-arrow").className;
   if(trackerarrow=="arrow-right-r") {
     // Shift arrow to down
     document.getElementById(typedomain + "-arrow").className = "arrow-down-r";
-    
+
     // Gather information
     trackerHTML += "<div id='" + typedomain + "-info' class='trackerinfo'>";
-    
+
     // Add on-off switch
     trackerHTML += "<span id='" + domainbaseurl + "switchcontainer' class='switchcontainer'><div class='onoffswitch'><input type='checkbox' name='onoffswitch' class='onoffswitch-checkbox' id='" + domainbaseurl + "switch'";
     if(BlockedData.indexOf(headerstouse[domainbaseurl].domains[0])==-1) {
       trackerHTML += " checked";
     }
     trackerHTML += "><label class='onoffswitch-label' for='" + domainbaseurl + "switch'><span class='onoffswitch-inner'></span><span class='onoffswitch-switch'></span></label></div></span>";
-    
+
     // Add tracker name
     var domaindata = background.getWebsiteData(headerstouse[domainbaseurl].domains[0]);
     var domainname = domainbaseurl;
@@ -943,12 +942,12 @@ function showCurrentTracker(typedomain) {
       domainname = domaindata.ALEXA.DMOZ.SITE["@attributes"].TITLE;
       domaindescription = domaindata.ALEXA.DMOZ.SITE["@attributes"].DESC;
     }
-    
+
     // Get number of requests from domain
     var requestNumS = getRequestNum(headerstouse, domainbaseurl, "https:");
     var requestNumU = getRequestNum(headerstouse, domainbaseurl, "http:");
     var requestNumT = parseInt(requestNumS, 10) + parseInt(requestNumU, 10);
-    
+
     // Add request and encryption information
     trackerHTML += requestNumT;
     if(requestNumU>0) {
@@ -961,7 +960,7 @@ function showCurrentTracker(typedomain) {
       trackerHTML += " was";
     }
     trackerHTML += " made to " + domainname + " ";
-    
+
     // Add reason for tracking
     switch(domaincategory) {
       case "tracking":
@@ -987,13 +986,13 @@ function showCurrentTracker(typedomain) {
         break;
     }
     trackerHTML += ", so " + domainname + " can track you.<br /><br />"
-    
+
     // Add user-centered data
     var domaintracked = getTrackedWebsites(domainbaseurl, headerstouse);
     var domaininterests = getTrackedInterests(domaintracked);
     var domainresources = getTrackedResources(domainbaseurl, headerstouse);
-    
-    // Adds the current page if a tracking profile has been created for the user
+
+    // Adds the current page if there are tracked interests
     if(domaininterests.length>0) {
       var tmpsitetopics = background.getWebsiteTopic(CurrentTab.url);
       for(j=0; j<tmpsitetopics.length; j++) {
@@ -1002,21 +1001,21 @@ function showCurrentTracker(typedomain) {
         }
       }
     }
-    
+
     // Generate HTML based on data
     if(domaintracked!="" && domaintracked!=null) {
       trackerHTML += domainname + " also knows that you visited:<ul>";
       for(i=0; i<domaintracked.length; i++) {
         var today = new Date();
         trackerHTML += "<li><b><span title='" + HistoryData[domaintracked[i]].url + "'>" + background.getDomain(HistoryData[domaintracked[i]].url) + "</span></b>, which you visited ";
-        
+
         var pageTime = "AM";
         var pageHour = HistoryData[domaintracked[i]].hour
         if(pageHour>12) {
           pageHour = pageHour - 12;
           pageTime = "PM";
         }
-        
+
         if(today.getDate()==HistoryData[domaintracked[i]].day && today.getMonth()==HistoryData[domaintracked[i]].month && today.getFullYear()==HistoryData[domaintracked[i]].year) {
           trackerHTML += "earlier today";
         } else if(today.getDate()==(HistoryData[domaintracked[i]].day + 1) && today.getMonth()==HistoryData[domaintracked[i]].month && today.getFullYear()==HistoryData[domaintracked[i]].year) {
@@ -1024,7 +1023,7 @@ function showCurrentTracker(typedomain) {
         } else {
           trackerHTML += "on " + parseWeekday(HistoryData[domaintracked[i]].weekday) + ", " + parseMonth(HistoryData[domaintracked[i]].month) + " " + HistoryData[domaintracked[i]].day + ", " + HistoryData[domaintracked[i]].year + " at " + pageHour + ":" + HistoryData[domaintracked[i]].minute + " " + pageTime;
         }
-        
+
         trackerHTML += "</li>";
       }
       trackerHTML += "</ul>";
@@ -1050,7 +1049,7 @@ function showCurrentTracker(typedomain) {
       }
       trackerHTML += "</ul>";
     }
-    
+
     // Add description if possible
     for(k=0; k<headerstouse[domainbaseurl].domains.length; k++) {
       domaindata = background.getWebsiteData(headerstouse[domainbaseurl].domains[k]);
@@ -1062,7 +1061,7 @@ function showCurrentTracker(typedomain) {
         domaindata = background.getWebsiteData(headerstouse[domainbaseurl].domains[0]);
       }
     }
-    
+
     // Add country base if possible
     for(k=0; k<headerstouse[domainbaseurl].domains.length; k++) {
       domaindata = background.getWebsiteData(headerstouse[domainbaseurl].domains[k]);
@@ -1075,11 +1074,11 @@ function showCurrentTracker(typedomain) {
         domaindata = background.getWebsiteData(headerstouse[domainbaseurl].domains[0]);
       }
     }
-    
+
     // Display expanded tracker details
     trackerHTML += "</div>";
     document.getElementById(typedomain).outerHTML += trackerHTML;
-    
+
     // Bind domains for categories
     var trackeritems = document.getElementsByClassName("tracker");
     for(i=0; i<trackeritems.length; i++) {
@@ -1093,7 +1092,7 @@ function showCurrentTracker(typedomain) {
         showCurrentTracker(this.id);
       }, false);
     }
-    
+
     // Bind switch
     document.getElementById(domainbaseurl + "switch").addEventListener("click", function() {
       // Add or remove from blacklist of domains
@@ -1105,10 +1104,10 @@ function showCurrentTracker(typedomain) {
         // Check if content
         if(domaincategory.indexOf("content")>-1) {
           var confirmHTML = "Blocking this website might stop this page from working properly. Are you sure?<br /><button id='" + domainbaseurl + "confirmyes' class='confirmbutton'>Yes</button>&nbsp;<button id='" + domainbaseurl + "confirmno' class='confirmbutton'>No</button><br /><br />";
-          
+
           document.getElementById(domainbaseurl + "switchcontainer").innerHTML = confirmHTML;
           document.getElementById(domainbaseurl + "switchcontainer").style.padding = "5px";
-          
+
           document.getElementById(domainbaseurl + "confirmyes").addEventListener("click", function() {
             document.getElementById(domainbaseurl + "switchcontainer").innerHTML = "<span id='" + domainbaseurl + "switchcontainer' class='switchcontainer'><div class='onoffswitch'><input type='checkbox' name='onoffswitch' class='onoffswitch-checkbox' id='" + domainbaseurl + "switch'><label class='onoffswitch-label' for='" + domainbaseurl + "switch'><span class='onoffswitch-inner'></span><span class='onoffswitch-switch'></span></label></div></span>";
             document.getElementById(domainbaseurl + "switchcontainer").style.padding = "none";
@@ -1126,13 +1125,13 @@ function showCurrentTracker(typedomain) {
           }
         }
       }
-      
+
       // Push new blacklist of domains
       background.pushData(BlockedDataName, BlockedData, "local", "Blocks saved.");
     }, false);
   } else {
     document.getElementById(typedomain + "-arrow").className = "arrow-right-r";
-    
+
     // Hide expanded tracker details
     var trackerinfotoremove = document.getElementById(typedomain + "-info");
     trackerinfotoremove.parentNode.removeChild(trackerinfotoremove);
@@ -1141,21 +1140,21 @@ function showCurrentTracker(typedomain) {
 
 function removeA(arr) {
   var what, a = arguments, L = a.length, ax;
-  
+
   while(L > 1 && arr.length) {
     what = a[--L];
     while((ax= arr.indexOf(what)) !== -1) {
       arr.splice(ax, 1);
     }
   }
-  
+
   return arr;
 }
 
 function getTrackedWebsites(trackerdomain, headerstouse) {
   var trackedwebsites = [];
   var tmptrackedlist = [];
-  
+
   // Runs through ExtensionData to find other domains with same tracker
   for(i=0; i<ExtensionData.length; i++) {
     if(headerstouse[trackerdomain].domains.indexOf(background.getDomain(ExtensionData[i].url))!=-1) {
@@ -1170,23 +1169,20 @@ function getTrackedWebsites(trackerdomain, headerstouse) {
 
 function getTrackedInterests(trackedlist) {
   var trackedinterests = [];
-  
-  // Runs through history entries of tracked websites for interests and article titles
+
+  // Run through history entries of tracked websites for interests
   for(i=0; i<trackedlist.length; i++) {
     var tmpsitetopics = HistoryData[trackedlist[i]].topics;
     var today = new Date();
     if(getDayDiff(today, new Date(HistoryData[trackedlist[i]].year, HistoryData[trackedlist[i]].month, HistoryData[trackedlist[i]].day))<=14) {
-      for(j=0; j<tmpsitetopics.length; j++) {
-        if(trackedinterests.indexOf(tmpsitetopics[j])==-1) {
-          trackedinterests[trackedinterests.length] = tmpsitetopics[j];
-        }
-      }
+       trackedinterests.concat(tmpsitetopics);
     } else {
       break;
     }
   }
   
-  return trackedinterests;
+  // Return list of interests sorted by frequency (descending) with duplicates removed
+  return sortFreqDupRemove(trackedinterests);
 }
 
 function getDayDiff(today, date) {
@@ -1198,6 +1194,33 @@ function getDayDiff(today, date) {
   // Find difference
   var diffDays = Math.round(Math.abs((firstDate.getTime() - secondDate.getTime())/(oneDay)));
   return diffDays;
+}
+
+function sortFreqDupRemove(array) {
+  var frequency = {}, value;
+
+  // Compute frequencies of each value
+  for(var i = 0; i < array.length; i++) {
+    value = array[i];
+    if(value in frequency) {
+      frequency[value]++;
+    } else {
+      frequency[value] = 1;
+    }
+  }
+
+  // Make array from the frequency object to de-duplicate
+  var uniques = [];
+  for(value in frequency) {
+    uniques.push(value);
+  }
+
+  // Sort the uniques array in descending order by frequency
+  function compareFrequency(a, b) {
+    return frequency[b] - frequency[a];
+  }
+
+  return uniques.sort(compareFrequency);
 }
 
 function getTrackedResources(trackerdomain, headerstouse) {
@@ -1220,7 +1243,7 @@ function getHeaders() {
   // Create variables
   var c = getHistoryId(CurrentTab.url);
   ExtensionData = background.ExtensionData;
-  
+
   // Collect headers
   for(i=(ExtensionData.length-1); i>=0; i--) {
     if(ExtensionData[i].id==c && ExtensionData[i].tab==CurrentTab.id && background.getDomain(ExtensionData[i].url) != background.getDomain(CurrentTab.url)) {
@@ -1232,7 +1255,7 @@ function getHeaders() {
         sortHeader(i);
       }
     }
-    
+
     // Check if headers are too old and stop if so
     if(HistoryData[ExtensionData[i]]!="" && HistoryData[ExtensionData[i]]!=null) {
       if(getDayDiff(today, new Date(HistoryData[ExtensionData[i]].year, HistoryData[ExtensionData[i]].month, HistoryData[ExtensionData[i]].day)>1)) {
@@ -1245,15 +1268,15 @@ function getHeaders() {
 function getHistoryId(url) {
   HistoryData = background.HistoryData;
   var historyid;
-  
+
   for(i=HistoryData.length-1; i>=0; i--) {
     if(HistoryData[i].url==CurrentTab.url && HistoryData[i].tab==CurrentTab.id) {
       historyid = HistoryData[i].id;
       break;
     }
   }
-  
-  return historyid;    
+
+  return historyid;
 }
 
 function sortHeader(i) {
@@ -1313,14 +1336,14 @@ function sortHeader(i) {
                 return;
               }
             }
-          } else { 
+          } else {
             return;
           }
         }
       }
     }
   }
-  
+
   // If match not found
   ExtensionData[i].title = background.getDomain(ExtensionData[i].url);
   sortContentHeader(i);
@@ -1378,7 +1401,7 @@ function showHeaders(inputheaders, headermessage, nonemessage, type) {
     for(domain in inputheaders) {
       requestcount = requestcount + inputheaders[domain].count;
     }
-    
+
     // List domains
     var i = 0;
     for(domain in inputheaders) {
@@ -1386,14 +1409,14 @@ function showHeaders(inputheaders, headermessage, nonemessage, type) {
       if(domain=="length") {
         break;
       }
-      
+
       // Check for top entry
       var topTracker = "";
       if(i==0) {
         topTracker += "-top";
         i++;
       }
-      
+
       // Check for unsecure requests or blocked domain
       var requestNumU = getRequestNum(inputheaders, domain, "http:");
       var trackedwebsites = getTrackedWebsites(domain, inputheaders);
@@ -1403,11 +1426,11 @@ function showHeaders(inputheaders, headermessage, nonemessage, type) {
       } else if(requestNumU>0) {
         colorTracker = " style='color: #B40000'";
       }
-      
+
       // Get domain information
       var headerdomain = domain;
       var headerdomainxml = background.getWebsiteData(headerdomain);
-      
+
       // Check domain favicon
       var headerfavicon = "http://www.google.com/s2/favicons?domain=" + inputheaders[domain].domains[0];
       var headerfaviconsize;
@@ -1421,11 +1444,11 @@ function showHeaders(inputheaders, headermessage, nonemessage, type) {
         }
       };
       xhr.send(null);
-      
+
       if(headerfavicon=="" || headerfavicon==null || headerfaviconsize==726) {
         headerfavicon = "../images/page.png";
       }
-      
+
       // Get domain title
       var headerdomaintitle = headerdomain;
       if(domain!=background.getDomain(inputheaders[domain].urls[0])) {
@@ -1435,10 +1458,10 @@ function showHeaders(inputheaders, headermessage, nonemessage, type) {
           headerdomaintitle = headerdomainxml.ALEXA.DMOZ.SITE["@attributes"].TITLE;
         }
       }
-      
+
       // Add domain entry
       outputHTML += "<div class='tracker" + topTracker + "' id='" + headerdomain + "-" + type + "'><span" + colorTracker + "><img class='icon' src='" + headerfavicon + "' align=left><b>" + headerdomaintitle + "</b><br />";
-      
+
       // Add other tracked pages
       if(trackedwebsites.length>0) {
         outputHTML += "Tracking " + trackedwebsites.length + " other website";
@@ -1449,34 +1472,34 @@ function showHeaders(inputheaders, headermessage, nonemessage, type) {
         outputHTML += "Just this page"
       }
       outputHTML += "</span>"
-      
+
       // Tidy up domain entry
       outputHTML += "<span id='" + headerdomain + "-" + type + "-arrow' class='arrow-right-r'></span></div>";
-      
+
       // Add to count of websites
       outputCount++;
     }
   }
-  
+
   var outputArray = {html: outputHTML, count: outputCount};
   return outputArray;
 }
 
 function getRequestNum(headers, domain, protocol) {
   var requestCounter = 0;
-  
+
   for(k=0; k<headers[domain].urls.length; k++) {
     if(new URL(headers[domain].urls[k]).protocol==protocol) {
       requestCounter++;
     }
   }
-  
+
   return requestCounter;
 }
 
 function getScore() {
   // Get score
-  
+
   return 0;
 }
 
@@ -1491,16 +1514,16 @@ function showList() {
   if(CurrentTab.favIconUrl=="" || CurrentTab.favIconUrl==null) {
     CurrentTab.favIconUrl = "../images/page.png";
   }
-  
+
   // Add tab information
   current = "<div id='current'><img id='icon-current' class='icon' src=" + CurrentTab.favIconUrl + " align=right></img><span id='title-current' class='title'>" + CurrentTab.title + "</span><br />" + CurrentTab.url + "</div>";
-  
+
   // Add view switcher
   current += "<div id='container'></div>";
-  
+
   // Display tab information and view switcher
   document.getElementById("content").innerHTML = current;
-  
+
   // Display current view
   switchView("category");
 }
@@ -1545,35 +1568,35 @@ function showOptions() {
     options += " checked";
   }
   options += ">Show all domain URLs used by tracking companies</input><br /><br /><div id='optionssubmit' class='optionsbutton'>Save</div></form></div></div></div>";
-  
+
   document.getElementById("content").innerHTML = options;
   document.getElementById("scroller").style.height = "485px";
-  
+
   document.getElementById("optionsclearhistory").addEventListener("click", function() {
     HistoryData.length = 0;
     pushData(HistoryDataName, HistoryData, "local", "History saved.");
   }, false);
   document.getElementById("optionssubmit").addEventListener("click", function() {
     var form = document.getElementById("form-options");
-    
+
     if(form.loghistory.checked) {
       PTOptions.log = true;
     } else {
       PTOptions.log = false;
     }
-    
+
     if(form.listdomains.checked) {
       PTOptions.listdomains = true;
     } else {
       PTOptions.listdomains = false;
     }
-    
+
     if(form.listresources.checked) {
       PTOptions.listresources = true;
     } else {
       PTOptions.listresources = false;
     }
-    
+
     background.pushData("PrivacyOptions", PTOptions, "sync", "Options saved.");
     document.getElementById("scroller").innerHTML += "Options saved.";
     switchCurrent();
