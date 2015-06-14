@@ -47,26 +47,20 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
       // Get extension, tracker, blocked, and history data
       chrome.storage.local.get(ExtensionDataName, function(r) {
         ExtensionData = r[ExtensionDataName];
-        console.log("Data retrieved.");
       });
       chrome.storage.local.get(TrackerDataName, function(r) {
         TrackerData = r[TrackerDataName];
-        console.log("Trackers retrieved.");
       });
       chrome.storage.local.get(BlockedDataName, function(r) {
         BlockedData = r[BlockedDataName];
-        console.log("Blocks retrieved.");
       });
       chrome.storage.local.get(HistoryDataName, function(r) {
         HistoryData = r[HistoryDataName];
-        console.log("History retrieved.");
       });
 
       // Record tracker details
       chrome.webRequest.onBeforeSendHeaders.addListener(function(details) {
         if(details.tabId!=-1) {
-          console.log("Headers received: " + count);
-
           if(ExtensionData[count-1]!="" && ExtensionData[count-1]!=null) {
             if(details.url!=CurrentTab.url) {
               if(getDomain(details.url)!=getDomain(CurrentTab.url)) {
@@ -113,7 +107,6 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
       var year = date.getFullYear();
 
       HistoryData.push({id: count, tab: tabId, type: "history", url: tab.url, title: tab.title, icon: tab.favIconUrl, topics: getWebsiteTopic(tab.url), minute: ("0" + minute).slice(-2), hour: hour, day: day, weekday: weekday, month: month, year: year});
-      console.log("Page saved: " + count);
 
       // Push history data
       pushData(HistoryDataName, HistoryData, "local", "History saved.");
@@ -256,12 +249,10 @@ function pushData(name, value, type, message) {
   obj[name] = value;
   if(type=="local") {
     chrome.storage.local.set(obj, function() {
-      console.log(message);
     });
   }
   if(type=="sync") {
     chrome.storage.sync.set(obj, function() {
-      console.log(message);
     });
   }
 }

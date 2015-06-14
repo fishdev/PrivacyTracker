@@ -41,13 +41,12 @@ function getGoing() {
   if(navigator.onLine) {
     // Start displaying page
     getStarted();
-    console.log("Loaded.");
   } else {
     // Display error message
     document.body.style.padding = 10;
     document.body.innerHTML = "<div id='error'><span class='title'><b>No Internet</b></span><img class='icon' src='../images/error.png' align=right><br /><br /><span class='message'>You're not connected to the Internet. Please check your network connection and try again.<br /><br /><button id='tryagainnetwork'>Try Again</button></span></div><img class='loadericon' src='../images/loading.gif'>";
     document.getElementById("tryagainnetwork").addEventListener("click", getGoing, false);
-    console.log("No Interent connection.");
+    console.log("No Internet connection.");
   }
 }
 
@@ -61,32 +60,25 @@ function getStarted() {
   // Get extension, blocked, and history data
   chrome.storage.local.get(ExtensionDataName, function(r) {
     ExtensionData = r[ExtensionDataName];
-    console.log("Data retrieved.");
   });
   chrome.storage.local.get(TrackerDataName, function(r) {
     TrackerData = r[TrackerDataName];
-    console.log("Trackers retrieved.");
   });
   chrome.storage.local.get(BlockedDataName, function(r) {
     BlockedData = r[BlockedDataName];
-    console.log("Blocks retrieved.");
   });
   chrome.storage.local.get(HistoryDataName, function(r) {
     HistoryData = r[HistoryDataName];
-    console.log("History retrieved.");
   });
 
   // Get options
   chrome.storage.sync.get(PTOptionsName, function(r) {
     PTOptions = r["PrivacyOptions"];
-    console.log("Options retrieved.");
 
     // Load websites JSON and everything else
     loadWebsites(function(response) {
       Websites = JSON.parse(response);
-      console.log("Website database loaded.");
-
-      console.log("Starting initiation check...");
+      
       // Check and log data
       if(ExtensionData!=null && HistoryData!=null && BlockedData!=null && TrackerData!=null && Websites!=null && PTOptions!=null) {
         console.log("All data fetched successfully!");
