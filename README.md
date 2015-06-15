@@ -9,15 +9,12 @@ PrivacyTracker is a user-centered browser plugin to help you understand online t
 - streamlined configuration options
 
 ### Installation
-1. Download the [PrivacyTracker ZIP](https://github.com/fishdev/PrivacyTracker/zipball/master)
-2. Extract the ZIP file
-2. Open Google Chrome
-2. Go to [chrome://extensions](chrome://extensions)
-3. In the upper-right hand corner, click "Developer mode"
-4. Click "Load unpacked extension..."
-5. Navigate to where you extracted the ZIP and click "OK"
-6. Accept permissions for PrivacyTracker
-7. Done. Now you can protect your data with PrivacyTracker!
+1. Open Google Chrome
+2. Download the [PrivacyTracker CRX file](https://github.com/fishdev/PrivacyTracker/releases/download/v0.3/PrivacyTracker.v0.3.crx)
+3. Go to [chrome://extensions](chrome://extensions)
+4. Drag the PrivacyTracker CRX file from the downloads bar at the bottom of the window into the center of the page
+7. Accept permissions for PrivacyTracker
+8. Done. Now you can protect your data with PrivacyTracker!
 
 ### Development
 I am currently in the process of developing PrivacyTracker. It is mostly feature-complete, but there may be various bugs throughout the software and some things simply may not work. If you have any contributions, feel free to make a pull request.
