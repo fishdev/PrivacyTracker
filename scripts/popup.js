@@ -231,7 +231,7 @@ function showHistory() {
         this.innerHTML = "Loading page...";
         chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
           if(changeInfo.status=="complete") {
-            getStarted();
+            window.close();
           }
         });
       }, false);
@@ -380,9 +380,11 @@ function showTracker(trackerid) {
     // Generate HTML based on data
     if(domaintracked!="" && domaintracked!=null) {
       trackerHTML += domainname + " knows that you visited:<ul>";
+      var tmptrackerHTML = "";
+      var overflowtrackerHTML = "";
       for(i=0; i<domaintracked.length; i++) {
         var today = new Date();
-        trackerHTML += "<li><b><span title='" + HistoryData[domaintracked[i]].url + "'>" + background.getDomain(HistoryData[domaintracked[i]].url) + "</span></b>, which you visited ";
+        tmptrackerHTML += "<li><b><span title='" + HistoryData[domaintracked[i]].url + "'>" + background.getDomain(HistoryData[domaintracked[i]].url) + "</span></b>, which you visited ";
 
         var pageTime = "AM";
         var pageHour = HistoryData[domaintracked[i]].hour
@@ -392,15 +394,26 @@ function showTracker(trackerid) {
         }
 
         if(today.getDate()==HistoryData[domaintracked[i]].day && today.getMonth()==HistoryData[domaintracked[i]].month && today.getFullYear()==HistoryData[domaintracked[i]].year) {
-          trackerHTML += "earlier today";
+          tmptrackerHTML += "earlier today";
         } else if(today.getDate()==(HistoryData[domaintracked[i]].day + 1) && today.getMonth()==HistoryData[domaintracked[i]].month && today.getFullYear()==HistoryData[domaintracked[i]].year) {
-          trackerHTML += "yesterday at " + pageHour + ":" + HistoryData[domaintracked[i]].minute + " " + pageTime;
+          tmptrackerHTML += "yesterday at " + pageHour + ":" + HistoryData[domaintracked[i]].minute + " " + pageTime;
         } else {
-          trackerHTML += "on " + parseWeekday(HistoryData[domaintracked[i]].weekday) + ", " + parseMonth(HistoryData[domaintracked[i]].month) + " " + HistoryData[domaintracked[i]].day + ", " + HistoryData[domaintracked[i]].year + " at " + pageHour + ":" + HistoryData[domaintracked[i]].minute + " " + pageTime;
+          tmptrackerHTML += "on " + parseWeekday(HistoryData[domaintracked[i]].weekday) + ", " + parseMonth(HistoryData[domaintracked[i]].month) + " " + HistoryData[domaintracked[i]].day + ", " + HistoryData[domaintracked[i]].year + " at " + pageHour + ":" + HistoryData[domaintracked[i]].minute + " " + pageTime;
         }
 
-        trackerHTML += "</li>";
+        tmptrackerHTML += "</li>";
+        
+        if(i < 5) {
+          trackerHTML += tmptrackerHTML;
+        } else {
+          overflowtrackerHTML += tmptrackerHTML;
+        }
       }
+      
+      if(domaintracked.length > 5) {
+      	trackerHTML += "<span id='" + domainname + "overflow'><li><a id='" + domainname + "showmore'>Show More...</a></li></span>";
+    	}
+    	
       trackerHTML += "</ul>";
     }
     if(domaininterests!="" && domaininterests!=null) {
@@ -477,6 +490,13 @@ function showTracker(trackerid) {
       // Push new blacklist of domains
       background.pushData(BlockedDataName, BlockedData, "local", "Blocks saved.");
     }, false);
+    
+    // Bind overflow button for tracked websites if needed
+    if(domaintracked.length > 0 && domaintracked.length > 5) {
+      document.getElementById(domainname + "showmore").addEventListener("click", function() {
+        document.getElementById(domainname + "overflow").innerHTML = overflowtrackerHTML;
+      }, false);
+    }
   } else {
     document.getElementById(trackerid + "-arrow").className = "arrow-right-r";
 
@@ -707,15 +727,6 @@ function switchView(type) {
     }, false);
     colorSortNum(sortitems[i].id);
   }
-
-  // Show tutorial if necessary
-  if(showTutorial) {
-    showTutorial();
-  }
-}
-
-function showTutorial() {
-  null;
 }
 
 function colorSortNum(categoryid) {
@@ -997,9 +1008,11 @@ function showCurrentTracker(typedomain) {
     // Generate HTML based on data
     if(domaintracked!="" && domaintracked!=null) {
       trackerHTML += domainname + " also knows that you visited:<ul>";
+      var tmptrackerHTML = "";
+      var overflowtrackerHTML = "";
       for(i=0; i<domaintracked.length; i++) {
         var today = new Date();
-        trackerHTML += "<li><b><span title='" + HistoryData[domaintracked[i]].url + "'>" + background.getDomain(HistoryData[domaintracked[i]].url) + "</span></b>, which you visited ";
+        tmptrackerHTML += "<li><b><span title='" + HistoryData[domaintracked[i]].url + "'>" + background.getDomain(HistoryData[domaintracked[i]].url) + "</span></b>, which you visited ";
 
         var pageTime = "AM";
         var pageHour = HistoryData[domaintracked[i]].hour
@@ -1009,15 +1022,26 @@ function showCurrentTracker(typedomain) {
         }
 
         if(today.getDate()==HistoryData[domaintracked[i]].day && today.getMonth()==HistoryData[domaintracked[i]].month && today.getFullYear()==HistoryData[domaintracked[i]].year) {
-          trackerHTML += "earlier today";
+          tmptrackerHTML += "earlier today";
         } else if(today.getDate()==(HistoryData[domaintracked[i]].day + 1) && today.getMonth()==HistoryData[domaintracked[i]].month && today.getFullYear()==HistoryData[domaintracked[i]].year) {
-          trackerHTML += "yesterday at " + pageHour + ":" + HistoryData[domaintracked[i]].minute + " " + pageTime;
+          tmptrackerHTML += "yesterday at " + pageHour + ":" + HistoryData[domaintracked[i]].minute + " " + pageTime;
         } else {
-          trackerHTML += "on " + parseWeekday(HistoryData[domaintracked[i]].weekday) + ", " + parseMonth(HistoryData[domaintracked[i]].month) + " " + HistoryData[domaintracked[i]].day + ", " + HistoryData[domaintracked[i]].year + " at " + pageHour + ":" + HistoryData[domaintracked[i]].minute + " " + pageTime;
+          tmptrackerHTML += "on " + parseWeekday(HistoryData[domaintracked[i]].weekday) + ", " + parseMonth(HistoryData[domaintracked[i]].month) + " " + HistoryData[domaintracked[i]].day + ", " + HistoryData[domaintracked[i]].year + " at " + pageHour + ":" + HistoryData[domaintracked[i]].minute + " " + pageTime;
         }
 
-        trackerHTML += "</li>";
+        tmptrackerHTML += "</li>";
+        
+        if(i < 5) {
+          trackerHTML += tmptrackerHTML;
+        } else {
+          overflowtrackerHTML += tmptrackerHTML;
+        }
       }
+      
+      if(domaintracked.length > 5) {
+      	trackerHTML += "<span id='" + domainname + "overflow'><li><a id='" + domainname + "showmore'>Show More...</a></li></span>";
+    	}
+    	
       trackerHTML += "</ul>";
     }
     if(domaininterests!="" && domaininterests!=null) {
@@ -1121,6 +1145,13 @@ function showCurrentTracker(typedomain) {
       // Push new blacklist of domains
       background.pushData(BlockedDataName, BlockedData, "local", "Blocks saved.");
     }, false);
+    
+    // Bind overflow button for tracked websites if needed
+    if(domaintracked.length > 0 && domaintracked.length > 5) {
+      document.getElementById(domainname + "showmore").addEventListener("click", function() {
+        document.getElementById(domainname + "overflow").innerHTML = overflowtrackerHTML;
+      }, false);
+    }
   } else {
     document.getElementById(typedomain + "-arrow").className = "arrow-right-r";
 
@@ -1149,7 +1180,7 @@ function getTrackedWebsites(trackerdomain, headerstouse) {
 
   // Runs through ExtensionData to find other domains with same tracker
   for(i=0; i<ExtensionData.length; i++) {
-    if(headerstouse[trackerdomain].domains.indexOf(background.getDomain(ExtensionData[i].url))!=-1) {
+    if(headerstouse[trackerdomain].domains.indexOf(background.getDomain(ExtensionData[i].url))!=-1 || trackerdomain==getTrackerTitle(i)) {
       if(tmptrackedlist.indexOf(background.getDomain(HistoryData[ExtensionData[i].id].url))==-1 && background.getDomain(HistoryData[ExtensionData[i].id].url)!=background.getDomain(CurrentTab.url)) {
         trackedwebsites[trackedwebsites.length] = ExtensionData[i].id;
         tmptrackedlist[tmptrackedlist.length] = background.getDomain(HistoryData[ExtensionData[i].id].url);

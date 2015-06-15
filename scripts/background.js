@@ -8,75 +8,62 @@ var HistoryDataName = "PrivacyHistory";
 var HistoryData;
 var CurrentTab;
 var showTutorial;
-var count = -1;
+var count = 0;
+
+chrome.tabs.onReplaced.addListener(function(addedTabId, removedTabId) {  
+  chrome.tabs.get(addedTabId, function(tab) {
+    chrome.tabs.onUpdated.dispatch(addedTabId, {"status": "loading"}, tab);
+    chrome.tabs.onUpdated.dispatch(addedTabId, {"status": "complete"}, tab);
+  });
+  
+});
 
 chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
-  // Clear cache
-  chrome.browsingData.remove({
-    "since": 0
-  }, {
-    "appcache": true,
-    "cache": true
-  }, function() {
-    console.log("Proper loading ensured.");
-  });
-
   // Do stuff if necessary
-  if(tab.url.indexOf("http://") > -1 || tab.url.indexOf("https://") > -1) {
+  if(tab.url.indexOf("http://") == 0 || tab.url.indexOf("https://") == 0) {
     if(changeInfo.status=="loading") {
       var tabUrl = tab.url;
       var tabTitle = tab.title;
       var tabIcon = tab.favIconUrl;
 
       // Create data if necessary
-      if(count==-1) {
+      if(count==0) {
         createData(ExtensionDataName);
         createData(TrackerDataName);
         createData(BlockedDataName);
         createData(HistoryDataName);
         createOptions("PrivacyOptions");
         showTutorial = true;
+        console.log("Completed first-run setup.");
       } else {
       	showTutorial = false;
       }
 
-      // Advance tracker assignment count
+      // Begin loading the page and recording stuff
       console.log("Loading initiated: " + count + " -> " + (count+1));
-      count++;
 
       // Get extension, tracker, blocked, and history data
-      chrome.storage.local.get(ExtensionDataName, function(r) {
+      chrome.storage.local.get(null, function(r) {
         ExtensionData = r[ExtensionDataName];
-      });
-      chrome.storage.local.get(TrackerDataName, function(r) {
         TrackerData = r[TrackerDataName];
-      });
-      chrome.storage.local.get(BlockedDataName, function(r) {
         BlockedData = r[BlockedDataName];
-      });
-      chrome.storage.local.get(HistoryDataName, function(r) {
         HistoryData = r[HistoryDataName];
+      });
+      
+      // Create tmpcount so that it can be modified to sync with HistoryData IDs after page loads
+      var tmpcount = count;
+      document.addEventListener("doneLoading", function(a) {
+        tmpcount = parseInt(a.detail);
       });
 
       // Record tracker details
       chrome.webRequest.onBeforeSendHeaders.addListener(function(details) {
         if(details.tabId!=-1) {
-          if(ExtensionData[count-1]!="" && ExtensionData[count-1]!=null) {
-            if(details.url!=CurrentTab.url) {
-              if(getDomain(details.url)!=getDomain(CurrentTab.url)) {
-                if(TrackerData.indexOf(getDomain(details.url))==-1) {
-                  TrackerData[TrackerData.length] = getDomain(details.url);
-                }
-                ExtensionData.push({id: count, tab: details.tabId, type: details.type, request: details.requestId, url: details.url, headers: details.requestHeaders, frameid: details.frameId, parentframeid: details.parentFrameId});
-              }
+          if(getDomain(details.url)!=getDomain(tab.url)) {
+            if(TrackerData.indexOf(getDomain(details.url))==-1) {
+              TrackerData[TrackerData.length] = getDomain(details.url);
             }
-          } else {
-            if(getDomain(details.url)!=getDomain(CurrentTab.url)) {
-              if(TrackerData.indexOf(getDomain(details.url))==-1) {
-                TrackerData[TrackerData.length] = getDomain(details.url);
-              }
-              ExtensionData.push({id: count, tab: details.tabId, type: details.type, request: details.requestId, url: details.url, headers: details.requestHeaders, frameid: details.frameId, parentframeid: details.parentFrameId});
-            }
+            ExtensionData.push({id: tmpcount, tab: details.tabId, type: details.type, request: details.requestId, url: details.url, headers: details.requestHeaders, frameid: details.frameId, parentframeid: details.parentFrameId});
           }
 
           // Block header if necessary
@@ -90,10 +77,9 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
       // Push extension and tracker data
       pushData(TrackerDataName, TrackerData, "local", "Trackers saved.");
       pushData(ExtensionDataName, ExtensionData, "local", "Data saved.");
-
-      // Save tab data
-      CurrentTab = tab;
     } else if(changeInfo.status=="complete") {
+      console.log("Loading complete.");
+      
       // Save tab data
       CurrentTab = tab;
 
@@ -105,11 +91,19 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
       var weekday = date.getDay();
       var month = date.getMonth();
       var year = date.getFullYear();
-
+			
       HistoryData.push({id: count, tab: tabId, type: "history", url: tab.url, title: tab.title, icon: tab.favIconUrl, topics: getWebsiteTopic(tab.url), minute: ("0" + minute).slice(-2), hour: hour, day: day, weekday: weekday, month: month, year: year});
 
       // Push history data
       pushData(HistoryDataName, HistoryData, "local", "History saved.");
+      
+      // Trigger doneLoading event listener
+      var doneLoadingEvent = new CustomEvent("doneLoading", {"detail": count.toString()})
+      document.dispatchEvent(doneLoadingEvent);
+      
+      // Once loading is complete, advance the count
+      // The placement of the count advancement is because advancing the count too early will cause some ExtensionData entries to have a different id from their corresponding HistoryData entry due to redirects when loading the page
+      count++;
     }
   }
 });
@@ -144,12 +138,19 @@ function getDMOZ(domain) {
 	encloutrequest.open("GET", "https://www.enclout.com/api/v1/dmoz/show.xml?auth_token=e2zFHvVw12-mkof5Ja5x&url=" + domain, false);
 	encloutrequest.send();
 	var encloutxml = encloutrequest.responseXML;
-	var encloutrequestxml = JSON.parse(encloutxml);
+	var encloutrequestxml = xmlToJson(encloutxml);
 	
-	// Get highest-level category
-	var dmozcategory = encloutrequestxml.dmoz["dmoz-categories"]["dmoz-category"][0].Category["#text"];
-	
-	return dmozcategory;
+	// Parse highest-level category string
+  if(encloutrequestxml.dmoz!="" && encloutrequestxml.dmoz!=null && encloutrequestxml.dmoz["dmoz-categories"]["dmoz-category"][0]!="" && encloutrequestxml.dmoz["dmoz-categories"]["dmoz-category"][0]!=null) {
+		var dmozcategory = encloutrequestxml.dmoz["dmoz-categories"]["dmoz-category"][0].Category["#text"];
+		if(dmozcategory.indexOf(":") != -1) {
+		  dmozcategory = dmozcategory.slice(dmozcategory.lastIndexOf(":") + 2)
+  	}
+  
+		return dmozcategory;
+	} else {
+		return null;
+  }
 }
 
 function getCategory(url) {
@@ -161,9 +162,12 @@ function getCategory(url) {
 	var alchemyrequestxml = xmlToJson(alchemyxml);
 	
 	// Parse category string
-	var alchemycategory = capitalizeFirstLetter(alchemyrequestxml.results.category["#text"]);
-	
-	return alchemycategory;
+	if(alchemyrequestxml.results.category!="" && alchemyrequestxml.results.category!=null) {
+		var alchemycategory = capitalizeFirstLetter(alchemyrequestxml.results.category["#text"]);
+		return alchemycategory;
+	} else {
+	  return null;
+	}
 }
 
 function getWebsiteData(domain) {
