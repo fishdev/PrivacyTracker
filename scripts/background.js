@@ -106,9 +106,6 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
     } else if(changeInfo.status=="complete") {
       console.log("Loading complete.");
       
-      // Save tab data
-      CurrentTab = tab;
-
       // Record page details
       var date = new Date();
       var minute = date.getMinutes();
@@ -122,6 +119,9 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
 
       // Push history data
       pushData(HistoryDataName, HistoryData, "local", "History saved.");
+      
+      // Save tab data
+      CurrentTab = tab;
       
       // Trigger doneLoading event listener
       var doneLoadingEvent = new CustomEvent("doneLoading", {"detail": count.toString()})
