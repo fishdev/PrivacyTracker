@@ -8,8 +8,33 @@ var HistoryDataName = "PrivacyHistory";
 var HistoryData;
 var CurrentTab;
 var showTutorial;
+var Websites;
+var WebsiteURLs = [];
+var WebsiteComps = [];
+var WebsiteCats = [];
 var count = 0;
 
+// Load websites JSON
+loadWebsites(function(response) {
+  Websites = JSON.parse(response);
+
+	// Restructure Websites
+	for(domaincategory in Websites) {
+		for(domaintitle in Websites[domaincategory]) {
+		  for(domainurl in Websites[domaincategory][domaintitle]) {
+		    for(domainsiteurl in Websites[domaincategory][domaintitle][domainurl]) {
+		    	for(var i = 0; i<Websites[domaincategory][domaintitle][domainurl][domainsiteurl].length; i++) {
+				    WebsiteURLs[WebsiteURLs.length] = Websites[domaincategory][domaintitle][domainurl][domainsiteurl][i];
+				    WebsiteComps[WebsiteComps.length] = Object.keys(Websites[domaincategory][domaintitle]);
+				    WebsiteCats[WebsiteCats.length] = domaincategory;
+			    }
+		    }
+		  }
+		}
+	}
+});
+
+// Fire listener if page is loaded from cache or instant bar
 chrome.tabs.onReplaced.addListener(function(addedTabId, removedTabId) {  
   chrome.tabs.get(addedTabId, function(tab) {
     chrome.tabs.onUpdated.dispatch(addedTabId, {"status": "loading"}, tab);
@@ -18,6 +43,7 @@ chrome.tabs.onReplaced.addListener(function(addedTabId, removedTabId) {
   
 });
 
+// Fire listener if page is loaded normally
 chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
   // Do stuff if necessary
   if(tab.url.indexOf("http://") == 0 || tab.url.indexOf("https://") == 0) {
@@ -59,7 +85,7 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
       // Record tracker details
       chrome.webRequest.onBeforeSendHeaders.addListener(function(details) {
         if(details.tabId!=-1) {
-          if(getDomain(details.url)!=getDomain(tab.url)) {
+          if(getDomain(details.url)!=getDomain(tab.url) && getTrackerTitle(getDomain(details.url), false)!=getTrackerTitle(getDomain(tab.url), false)) {
             if(TrackerData.indexOf(getDomain(details.url))==-1) {
               TrackerData[TrackerData.length] = getDomain(details.url);
             }
@@ -108,6 +134,60 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
   }
 });
 
+function loadWebsites(callback) {
+  var xobj = new XMLHttpRequest();
+  xobj.overrideMimeType("application/json");
+	xobj.open('GET', '../data/websites.json', true);
+	xobj.onreadystatechange = function() {
+    if(xobj.readyState==4 && xobj.status=="200") {
+      callback(xobj.responseText);
+    }
+  };
+  xobj.send(null);
+}
+
+function getTrackerTitle(i, fromPopup) {
+  var urltouse = "";
+
+  // Figure out which URL to compare based on i and fromPopup
+  if(fromPopup) {
+  	urltouse = getDomain(ExtensionData[i].url);
+	} else {
+		urltouse = i;
+	}
+  
+  // Search in WebsiteURLs for match
+  var index = WebsiteURLs.indexOf(urltouse);
+  if(index==-1) {
+  	// If no match found, return just the domain
+    return urltouse;
+  } else {
+		// Check to make sure the history entry for this page is not the tracker in question (if from popup.js)
+		// If true, ignore this header/tracker entirely
+  	if(fromPopup) {
+  		historyentryurl = getDomain(historySearch(ExtensionData[i].id).url);
+  		if(urltouse==historyentryurl) {
+  			return;
+  		}
+  	}
+  	
+  	// Otherwise, return the tracker company name
+  	return WebsiteComps[index].toString();
+ 	}
+}
+
+function historySearch(searchID){
+  for(var nodeIdx = 0; nodeIdx <= HistoryData.length-1; nodeIdx++) {
+  	var currentNode = HistoryData[nodeIdx];
+    var currentId = currentNode.id;
+    var currentChildren = currentNode.children;
+    if(currentId == searchID) {    
+      return currentNode;
+    }
+  }
+  return;
+}
+
 function getWebsiteTopic(websiteurl) {
   // Get DMOZ data from Enclout API and category from Alchemy API
   var websitedmoz = getDMOZ(getDomain(websiteurl));
@@ -135,9 +215,13 @@ function getWebsiteTopic(websiteurl) {
 function getDMOZ(domain) {
   // Call Enclout DMOZ API
 	var encloutrequest = new XMLHttpRequest();
-	encloutrequest.open("GET", "https://www.enclout.com/api/v1/dmoz/show.xml?auth_token=e2zFHvVw12-mkof5Ja5x&url=" + domain, false);
+	encloutrequest.open("GET", "http://enclout.com/api/v1/dmoz/show.json?auth_token=e2zFHvVw12-mkof5Ja5x&url=" + domain, false);
+	encloutrequest.open("GET", "http://dmoz-api.appspot.com/category?url=" + domain, false);
 	encloutrequest.send();
 	var encloutxml = encloutrequest.responseXML;
+	if(encloutxml=="" || encloutxml==null) {
+		return null;
+	}
 	var encloutrequestxml = xmlToJson(encloutxml);
 	
 	// Parse highest-level category string
@@ -146,7 +230,6 @@ function getDMOZ(domain) {
 		if(dmozcategory.indexOf(":") != -1) {
 		  dmozcategory = dmozcategory.slice(dmozcategory.lastIndexOf(":") + 2)
   	}
-  
 		return dmozcategory;
 	} else {
 		return null;
@@ -164,6 +247,9 @@ function getCategory(url) {
 	// Parse category string
 	if(alchemyrequestxml.results.category!="" && alchemyrequestxml.results.category!=null) {
 		var alchemycategory = capitalizeFirstLetter(alchemyrequestxml.results.category["#text"]);
+		if(alchemycategory.indexOf("_") != -1) {
+			alchemycategory = alchemycategory.substring(0, alchemycategory.indexOf("_")) + " & " + alchemycategory.slice(alchemycategory.indexOf("_") + 1);
+		}
 		return alchemycategory;
 	} else {
 	  return null;

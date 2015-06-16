@@ -1,6 +1,6 @@
 @font-face {
   font-family: "Interface";
-  src: url(../fonts/EncodeSans.ttf);
+  src: url(../fonts/Roboto.ttf);
 }
 
 @font-face {
@@ -39,7 +39,7 @@ body {
 }
 
 .icon {
-	width: 4.25em;
+	width: 5em;
 }
 
 .spacer {
@@ -48,7 +48,8 @@ body {
 }
 
 #header {
-	background-color: #D6E6FF;
+	background: url('../images/header-background.png');
+	background-size: 400px 74px;
 	font-family: "Title";
 	color: black;
 	height: 5.2em;
@@ -56,8 +57,6 @@ body {
 }
 
 .tab {
-	background-color: #D6E6FF;
-	border: 1px solid #D6E6FF;
 	border-bottom: none;
 	color: black;
 	height: 1em;
@@ -535,7 +534,7 @@ body {
   padding-bottom: 3px;
   overflow-x: hidden;
   overflow-y: auto;
-  height: 438px;
+  height: 442px;
 }
 
 #scroller::-webkit-scrollbar {
@@ -604,4 +603,13 @@ body {
 
 .text-separator {
   color: darkgray;
+}
+
+.about-link {
+	color: black;
+	text-decoration: underline;
+}
+
+.about-link:hover {
+	cursor: pointer;
 }

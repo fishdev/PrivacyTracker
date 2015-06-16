@@ -15,7 +15,9 @@ var HistoryData;
 var HistoryDataName = background.HistoryDataName;
 var PTOptions;
 var PTOptionsName = "PrivacyOptions";
-var Websites;
+var WebsiteURLs = background.WebsiteURLs;
+var WebsiteComps = background.WebsiteComps;
+var WebsiteCats = background.WebsiteCats;
 var showTutorial = background.showTutorial;
 var TrackingHeaders = {};
 var TrackingHeaderArray;
@@ -74,52 +76,34 @@ function getStarted() {
   // Get options
   chrome.storage.sync.get(PTOptionsName, function(r) {
     PTOptions = r["PrivacyOptions"];
-
-    // Load websites JSON and everything else
-    loadWebsites(function(response) {
-      Websites = JSON.parse(response);
       
-      // Check and log data
-      if(ExtensionData!=null && HistoryData!=null && BlockedData!=null && TrackerData!=null && Websites!=null && PTOptions!=null) {
-        console.log("All data fetched successfully!");
+    // Check and log data
+    if(ExtensionData!=null && HistoryData!=null && BlockedData!=null && TrackerData!=null && WebsiteURLs!=null && WebsiteComps!=null && WebsiteCats!=null && PTOptions!=null) {
+      console.log("All data fetched successfully!");
 
-        // Get headers
-        getHeaders();
+      // Get headers
+      getHeaders();
 
-        // Get data for each header category
-        TrackingHeaderArray = showHeaders(TrackingHeaders, "to external tracking services.", "There are no external websites tracking your visit to this page.", "tracking");
-        AdvertisingHeaderArray = showHeaders(AdvertisingHeaders, "for this page's ads.", "This page doesn't have ads from external sites.", "advertising");
-        SocialHeaderArray = showHeaders(SocialHeaders, "to social networks.", "This page doesn't have any connected social networks.", "social");
-        MainHeaderArray = showHeaders(MainHeaders, "to external websites for this page's main content.", "This page doesn't get its main content from any external sources.", "contentmain");
-        ImageHeaderArray = showHeaders(ImageHeaders, "to external websites for this page's images.", "This page doesn't get its images from any external sources.", "contentimages");
-        ScriptHeaderArray = showHeaders(ScriptHeaders, "to external websites for this page's scripts.", "This page doesn't get its scripts content from any external sources.", "contentscripts");
-        StylesheetHeaderArray = showHeaders(StylesheetHeaders, "to external websites for this page's layout.", "This page doesn't get its layout from any external sources.", "contentstylesheets");
+      // Get data for each header category
+      TrackingHeaderArray = showHeaders(TrackingHeaders, "to external tracking services.", "There are no external websites tracking your visit to this page.", "tracking");
+      AdvertisingHeaderArray = showHeaders(AdvertisingHeaders, "for this page's ads.", "This page doesn't have ads from external sites.", "advertising");
+      SocialHeaderArray = showHeaders(SocialHeaders, "to social networks.", "This page doesn't have any connected social networks.", "social");
+      MainHeaderArray = showHeaders(MainHeaders, "to external websites for this page's main content.", "This page doesn't get its main content from any external sources.", "contentmain");
+      ImageHeaderArray = showHeaders(ImageHeaders, "to external websites for this page's images.", "This page doesn't get its images from any external sources.", "contentimages");
+      ScriptHeaderArray = showHeaders(ScriptHeaders, "to external websites for this page's scripts.", "This page doesn't get its scripts content from any external sources.", "contentscripts");
+      StylesheetHeaderArray = showHeaders(StylesheetHeaders, "to external websites for this page's layout.", "This page doesn't get its layout from any external sources.", "contentstylesheets");
 
-        // Display page
-        document.body.style.padding = 0;
-        switchCurrent();
-      } else {
-        // Display error message
-        document.body.style.padding = 10;
-        document.body.style.height = 400;
-        document.body.innerHTML = "<div id='error'><span class='title'><b>Oops!</b></span><img class='icon' src='../images/error.png' align=right><br /><br /><span class='message'>Something went seriously wrong when we tried to load your tracking info. If this happens again, please try reinstalling PrivacyTracker.</span></div><img class='loadericon' src='../images/loading.gif'>";
-      }
-    });
+      // Display page
+      document.body.style.padding = 0;
+      switchCurrent();
+    } else {
+      // Display error message
+      document.body.style.padding = 10;
+      document.body.style.height = 400;
+      document.body.innerHTML = "<div id='error'><span class='title'><b>Oops!</b></span><img class='icon' src='../images/error.png' align=right><br /><br /><span class='message'>Something went seriously wrong when we tried to load your tracking info. If this happens again, please try reinstalling PrivacyTracker.</span></div><img class='loadericon' src='../images/loading.gif'>";
+    }
   });
 }
-
-function loadWebsites(callback) {
-  var xobj = new XMLHttpRequest();
-  xobj.overrideMimeType("application/json");
-	xobj.open('GET', '../data/websites.json', true);
-	xobj.onreadystatechange = function() {
-    if(xobj.readyState==4 && xobj.status=="200") {
-      callback(xobj.responseText);
-    }
-  };
-  xobj.send(null);
- }
-
 
 window.addEventListener("load", function() {
   // Bind tabs and links
@@ -174,7 +158,7 @@ function showHistory() {
 
     // Display historyHTML
     document.getElementById("content").innerHTML = historyHTML;
-    document.getElementById("scroller").style.height = "446px";
+    document.getElementById("scroller").style.height = "450px";
   } else {
     var startWeekday = parseWeekday(HistoryData[HistoryData.length-1].weekday);
     var startMonth = parseMonth(HistoryData[HistoryData.length-1].month);
@@ -221,7 +205,7 @@ function showHistory() {
 
     // Display historyHTML
     document.getElementById("content").innerHTML = historyHTML;
-    document.getElementById("scroller").style.height = "446px";
+    document.getElementById("scroller").style.height = "450px";
 
     // Bind history entries
     var historyitems = document.getElementsByClassName("history");
@@ -230,7 +214,7 @@ function showHistory() {
         chrome.tabs.update({url: HistoryData[this.id.substring(7)].url, selected: true});
         this.innerHTML = "Loading page...";
         chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
-          if(changeInfo.status=="complete") {
+          if(changeInfo.status=="loading") {
             window.close();
           }
         });
@@ -326,7 +310,7 @@ function showOverview() {
     overviewHTML += "</span></div>";
 
     document.getElementById("content").innerHTML = overviewHTML;
-    document.getElementById("scroller").style.height = "446px";
+    document.getElementById("scroller").style.height = "450px";
 
     // Bind tracker entries
     var trackeritems = document.getElementsByClassName("tracker");
@@ -508,7 +492,7 @@ function showTracker(trackerid) {
 
 function getTrackers() {
   // Go through all headers
-  for(i=0; i<ExtensionData.length; i++) {
+  for(i=(ExtensionData.length-1); i>=0; i++) {
     // Take the domain from this header and sort it as a tracker
     sortTracker(i);
   }
@@ -527,7 +511,7 @@ function getTrackers() {
 }
 
 function sortTracker(i) {
-  var trackertitle = getTrackerTitle(i);
+  var trackertitle = background.getTrackerTitle(i, true);
 
   // Check for errors (empty or undefined titles)
   if(trackertitle!="undefined" && trackertitle!="" && trackertitle!=null && trackertitle!="null") {
@@ -542,45 +526,18 @@ function sortTracker(i) {
       SortedTrackersTmp[trackertitle].domains[SortedTrackersTmp[trackertitle].domains.length] = background.getDomain(ExtensionData[i].url);
     }
     // Check if this tracked website is added
-    if(SortedTrackersTmp[trackertitle].trackedwebsites.indexOf(ExtensionData[i].id)==-1) {
-      // If not, add it
+    var alreadyAdded = false;
+    for(var j=0; j<SortedTrackersTmp[trackertitle].trackedwebsites.length; j++) {
+    	if(background.getDomain(HistoryData[SortedTrackersTmp[trackertitle].trackedwebsites[j]].url)==background.getDomain(background.historySearch(ExtensionData[i].id).url)) {
+    		alreadyAdded = true;
+    		break;
+    	}
+    }
+    // If not, add it
+    if(!alreadyAdded) {
       SortedTrackersTmp[trackertitle].trackedwebsites[SortedTrackersTmp[trackertitle].trackedwebsites.length] = ExtensionData[i].id;
     }
   }
-}
-
-function getTrackerTitle(i) {
-  var trackertitle = "";
-
-  // Start search in website database
-  // Main categories in database
-  for(domaincategory in Websites) {
-    // Specific website
-    for(domaintitle in Websites[domaincategory]) {
-      // Website title
-      for(domainurl in Websites[domaincategory][domaintitle]) {
-        // Website main url
-        for(domainsiteurl in Websites[domaincategory][domaintitle][domainurl]) {
-          // Check to make sure the history entry for this page is not the tracker in question
-          // If true, ignore this header/tracker entirely
-          if(Websites[domaincategory][domaintitle][domainurl][domainsiteurl].indexOf(background.getDomain(HistoryData[ExtensionData[i].id].url))>-1 || background.getDomain(Object.keys(Websites[domaincategory][domaintitle][domainurl])[0])==background.getDomain(HistoryData[ExtensionData[i].id].url) || background.getDomain(ExtensionData[i].url)==background.getDomain(HistoryData[ExtensionData[i].id].url)) {
-            return;
-          } else {
-            // Website other urls
-            if(Websites[domaincategory][domaintitle][domainurl][domainsiteurl].indexOf(background.getDomain(ExtensionData[i].url))>-1) {
-              // Match found, sort and add it
-              trackertitle = Object.keys(Websites[domaincategory][domaintitle])[0];
-              return trackertitle;
-            }
-          }
-        }
-      }
-    }
-  }
-
-  // If no matches found, make the tracker name the domain name
-  trackertitle = background.getDomain(ExtensionData[i].url);
-  return trackertitle;
 }
 
 function parseWeekday(pageWeekday) {
@@ -714,7 +671,7 @@ function switchView(type) {
 
   // Display view
   document.getElementById("container").innerHTML = viewHTML;
-  document.getElementById("scroller").style.height = "485x";
+  document.getElementById("scroller").style.height = "487x";
   if(document.getElementById("trackers")!=null && document.getElementById("trackers")!="") {
     document.getElementById("trackers").style.borderTop = "none";
   }
@@ -1180,10 +1137,11 @@ function getTrackedWebsites(trackerdomain, headerstouse) {
 
   // Runs through ExtensionData to find other domains with same tracker
   for(i=0; i<ExtensionData.length; i++) {
-    if(headerstouse[trackerdomain].domains.indexOf(background.getDomain(ExtensionData[i].url))!=-1 || trackerdomain==getTrackerTitle(i)) {
-      if(tmptrackedlist.indexOf(background.getDomain(HistoryData[ExtensionData[i].id].url))==-1 && background.getDomain(HistoryData[ExtensionData[i].id].url)!=background.getDomain(CurrentTab.url)) {
+    if(headerstouse[trackerdomain].domains.indexOf(background.getDomain(ExtensionData[i].url))!=-1 || trackerdomain==background.getTrackerTitle(i, true)) {
+    	var historyDomain = background.getDomain(background.historySearch(ExtensionData[i].id).url);
+      if(tmptrackedlist.indexOf(historyDomain)==-1 && historyDomain!=background.getDomain(CurrentTab.url)) {
         trackedwebsites[trackedwebsites.length] = ExtensionData[i].id;
-        tmptrackedlist[tmptrackedlist.length] = background.getDomain(HistoryData[ExtensionData[i].id].url);
+        tmptrackedlist[tmptrackedlist.length] = historyDomain;
       }
     }
   }
@@ -1269,19 +1227,14 @@ function getHeaders() {
 
   // Collect headers
   for(i=(ExtensionData.length-1); i>=0; i--) {
-    if(ExtensionData[i].id==c && ExtensionData[i].tab==CurrentTab.id && background.getDomain(ExtensionData[i].url) != background.getDomain(CurrentTab.url)) {
-      if(ExtensionData[i-1]!="" && ExtensionData[i-1]!=null) {
-        if(ExtensionData[i-1].url != ExtensionData[i].url) {
-          sortHeader(i);
-        }
-      } else {
-        sortHeader(i);
-      }
+    if(ExtensionData[i].id==c && ExtensionData[i].tab==CurrentTab.id && background.getTrackerTitle(background.getDomain(ExtensionData[i].url), false) != background.getTrackerTitle(CurrentTab.url, false)) {
+      sortHeader(i);
     }
 
     // Check if headers are too old and stop if so
-    if(HistoryData[ExtensionData[i]]!="" && HistoryData[ExtensionData[i]]!=null) {
-      if(getDayDiff(today, new Date(HistoryData[ExtensionData[i]].year, HistoryData[ExtensionData[i]].month, HistoryData[ExtensionData[i]].day)>1)) {
+    var today = new Date();
+    if(background.historySearch(ExtensionData[i].id)!="" && background.historySearch(ExtensionData[i].id)!=null) {
+      if(getDayDiff(today, new Date(background.historySearch(ExtensionData[i].id).year, background.historySearch(ExtensionData[i].id).month, background.historySearch(ExtensionData[i].id).day))>1) {
         return;
       }
     }
@@ -1303,74 +1256,53 @@ function getHistoryId(url) {
 }
 
 function sortHeader(i) {
-  // Start search in website database
-  // Main categories in database
-  for(domaincategory in Websites) {
-    // Specific website
-    for(domaintitle in Websites[domaincategory]) {
-      // Website title
-      for(domainurl in Websites[domaincategory][domaintitle]) {
-        // Website main url
-        for(domainsiteurl in Websites[domaincategory][domaintitle][domainurl]) {
-          // Check if website main url matches current page (should be false)
-          var domainsiteurldomain = background.getDomain(domainsiteurl);
-          var currenttabdomain = background.getDomain(CurrentTab.url);
-          if(domainsiteurldomain!=currenttabdomain) {
-            // Website other urls
-            for(j=0; j<Websites[domaincategory][domaintitle][domainurl][domainsiteurl].length; j++) {
-              if(background.getDomain(ExtensionData[i].url)==Websites[domaincategory][domaintitle][domainurl][domainsiteurl][j]) {
-                // Match found, sort and add it
-                ExtensionData[i].title = Object.keys(Websites[domaincategory][domaintitle])[0];
-                switch(domaincategory) {
-                  case "Tracking":
-                    if(TrackingHeaders[ExtensionData[i].title]==""  || TrackingHeaders[ExtensionData[i].title]==null) {
-                      TrackingHeaders[ExtensionData[i].title] = {domains: [], urls: [], count: 0};
-                    }
-                    if(TrackingHeaders[ExtensionData[i].title].domains.indexOf(background.getDomain(ExtensionData[i].url))==-1) {
-                      TrackingHeaders[ExtensionData[i].title].domains[TrackingHeaders[ExtensionData[i].title].domains.length] = background.getDomain(ExtensionData[i].url);
-                    }
-                    TrackingHeaders[ExtensionData[i].title].urls[TrackingHeaders[ExtensionData[i].title].urls.length] = ExtensionData[i].url;
-                    TrackingHeaders[ExtensionData[i].title].count++;
-                    break;
-                  case "Advertising":
-                    if(AdvertisingHeaders[ExtensionData[i].title]==""  || AdvertisingHeaders[ExtensionData[i].title]==null) {
-                      AdvertisingHeaders[ExtensionData[i].title] = {domains: [], urls: [], count: 0};
-                    }
-                    if(AdvertisingHeaders[ExtensionData[i].title].domains.indexOf(background.getDomain(ExtensionData[i].url))==-1) {
-                      AdvertisingHeaders[ExtensionData[i].title].domains[AdvertisingHeaders[ExtensionData[i].title].domains.length] = background.getDomain(ExtensionData[i].url);
-                    }
-                    AdvertisingHeaders[ExtensionData[i].title].urls[AdvertisingHeaders[ExtensionData[i].title].urls.length] = ExtensionData[i].url;
-                    AdvertisingHeaders[ExtensionData[i].title].count++;
-                    break;
-                  case "Social":
-                    if(SocialHeaders[ExtensionData[i].title]==""  || SocialHeaders[ExtensionData[i].title]==null) {
-                      SocialHeaders[ExtensionData[i].title] = {domains: [], urls: [], count: 0};
-                    }
-                    if(SocialHeaders[ExtensionData[i].title].domains.indexOf(background.getDomain(ExtensionData[i].url))==-1) {
-                      SocialHeaders[ExtensionData[i].title].domains[SocialHeaders[ExtensionData[i].title].domains.length] = background.getDomain(ExtensionData[i].url);
-                    }
-                    SocialHeaders[ExtensionData[i].title].urls[SocialHeaders[ExtensionData[i].title].urls.length] = ExtensionData[i].url;
-                    SocialHeaders[ExtensionData[i].title].count++;
-                    break;
-                  case "Content":
-                    sortContentHeader(i);
-                    break;
-                }
-                return;
-              }
-            }
-          } else {
-            return;
-          }
+  // Check for match in WebsiteURLs
+  var index = WebsiteURLs.indexOf(background.getDomain(ExtensionData[i].url));
+  if(index==-1) {
+  	// If match not found
+		ExtensionData[i].title = background.getDomain(ExtensionData[i].url);
+		sortContentHeader(i);
+		return;
+	} else {
+    // Match found, sort and add it
+    ExtensionData[i].title = WebsiteComps[index].toString();
+    switch(WebsiteCats[index]) {
+      case "Tracking":
+        if(TrackingHeaders[ExtensionData[i].title]==""  || TrackingHeaders[ExtensionData[i].title]==null) {
+          TrackingHeaders[ExtensionData[i].title] = {domains: [], urls: [], count: 0};
         }
-      }
+        if(TrackingHeaders[ExtensionData[i].title].domains.indexOf(background.getDomain(ExtensionData[i].url))==-1) {
+          TrackingHeaders[ExtensionData[i].title].domains[TrackingHeaders[ExtensionData[i].title].domains.length] = background.getDomain(ExtensionData[i].url);
+        }
+        TrackingHeaders[ExtensionData[i].title].urls[TrackingHeaders[ExtensionData[i].title].urls.length] = ExtensionData[i].url;
+        TrackingHeaders[ExtensionData[i].title].count++;
+        break;
+      case "Advertising":
+        if(AdvertisingHeaders[ExtensionData[i].title]==""  || AdvertisingHeaders[ExtensionData[i].title]==null) {
+          AdvertisingHeaders[ExtensionData[i].title] = {domains: [], urls: [], count: 0};
+        }
+        if(AdvertisingHeaders[ExtensionData[i].title].domains.indexOf(background.getDomain(ExtensionData[i].url))==-1) {
+          AdvertisingHeaders[ExtensionData[i].title].domains[AdvertisingHeaders[ExtensionData[i].title].domains.length] = background.getDomain(ExtensionData[i].url);
+        }
+        AdvertisingHeaders[ExtensionData[i].title].urls[AdvertisingHeaders[ExtensionData[i].title].urls.length] = ExtensionData[i].url;
+        AdvertisingHeaders[ExtensionData[i].title].count++;
+        break;
+      case "Social":
+        if(SocialHeaders[ExtensionData[i].title]==""  || SocialHeaders[ExtensionData[i].title]==null) {
+          SocialHeaders[ExtensionData[i].title] = {domains: [], urls: [], count: 0};
+        }
+        if(SocialHeaders[ExtensionData[i].title].domains.indexOf(background.getDomain(ExtensionData[i].url))==-1) {
+          SocialHeaders[ExtensionData[i].title].domains[SocialHeaders[ExtensionData[i].title].domains.length] = background.getDomain(ExtensionData[i].url);
+        }
+        SocialHeaders[ExtensionData[i].title].urls[SocialHeaders[ExtensionData[i].title].urls.length] = ExtensionData[i].url;
+        SocialHeaders[ExtensionData[i].title].count++;
+        break;
+      case "Content":
+        sortContentHeader(i);
+        break;
     }
+    return;
   }
-
-  // If match not found
-  ExtensionData[i].title = background.getDomain(ExtensionData[i].url);
-  sortContentHeader(i);
-  return;
 }
 
 function sortContentHeader(i) {
@@ -1564,7 +1496,7 @@ function switchHelp() {
 function showHelp() {
   help = "<div id='container'><div id='scroller'><div id='elevenpt'>If you are unsure about what some of the features of PrivacyTracker do, this section will help.<br /><br /><b>Color Coded Categories</b><br />The up to three headings you see when you open up PrivacyTracker group websites that track you into categories. They are each colored with a shade of red, which is indicative of the number of websites listed under the category. If the number is very high, the entire category heading will be bolded.<br /><br /><b>Tracker Listings</b><br />Under each category is a list of websites and companies that are tracking you on a webpage. The name of the website is shown in bold, with other pages the tracker knows you visited below the name. If the name is shown in red, the tracker is unsecurely connected to the webpage, so your personal information is not protected and could be stolen. If the tracker name is gray, you've blocked the tracker.</div></div></div>";
   document.getElementById("content").innerHTML = help;
-  document.getElementById("scroller").style.height = "485px";
+  document.getElementById("scroller").style.height = "487px";
 }
 
 function switchOptions() {
@@ -1593,7 +1525,7 @@ function showOptions() {
   options += ">Show all domain URLs used by tracking companies</input><br /><br /><div id='optionssubmit' class='optionsbutton'>Save</div></form></div></div></div>";
 
   document.getElementById("content").innerHTML = options;
-  document.getElementById("scroller").style.height = "485px";
+  document.getElementById("scroller").style.height = "487px";
 
   document.getElementById("optionsclearhistory").addEventListener("click", function() {
     HistoryData.length = 0;
@@ -1637,7 +1569,20 @@ function switchAbout() {
 }
 
 function showAbout() {
-  about = "<div id='container'><div id='scroller'><div id='elevenpt'>PrivacyTracker is a browser plugin designed to simplify the process of managing web services that track you as you browse. It offers useful information regarding what these tracking companies know about you and allows you to disable services based on these facts.</div></div></div>";
+  about = "<div id='container'><div id='scroller'><div id='elevenpt'>PrivacyTracker is a browser plugin designed to simplify the process of managing web services that track you as you browse. It offers useful information regarding what these tracking companies know about you and allows you to disable services based on these facts.<br /><br />PrivacyTracker is a <a class='about-link' id='http://fishdev.github.io/'>FishDev</a> project. Designed to make life easier. Completely free and open. You can learn more about the development of PrivacyTracker, suggest changes, report bugs, or view the source code on the <a class='about-link' id='https://github.com/fishdev/PrivacyTracker/'>GitHub repository</a>.</div></div></div>";
   document.getElementById("content").innerHTML = about;
-  document.getElementById("scroller").style.height = "485px";
+  document.getElementById("scroller").style.height = "487px";
+  
+  // Bind links
+  var aboutlinks = document.getElementsByClassName("about-link");
+    for(j=0; j<aboutlinks.length; j++) {
+      document.getElementById(aboutlinks[j].id).addEventListener("click", function() {
+        chrome.tabs.update({url: this.id, selected: true});
+        chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
+          if(changeInfo.status=="loading") {
+            window.close();
+          }
+        });
+      }, false);
+    }
 }
