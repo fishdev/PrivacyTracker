@@ -13,7 +13,7 @@
 		"512": "images/512.png"
 	},
   "background": {
-    "scripts": ["scripts/newengine-background.js"],
+    "scripts": ["scripts/background.js"],
     "persistent": true
   },
 	"permissions": [
