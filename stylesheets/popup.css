@@ -114,8 +114,9 @@ body {
   padding-bottom: 40px;
   padding-right: 40px;
   text-align: justify;
-  background-color: ghostwhite;
   border-radius: 1em;
+  color: white;
+  font-family: 'Interface';
 }
 
 #error .icon {
@@ -131,6 +132,7 @@ body {
 #error .message {
   font-family: "Interface";
   font-weight: normal;
+  font-size: 10pt;
 }
 
 #error button {

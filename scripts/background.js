@@ -12,7 +12,7 @@ var Websites;
 var WebsiteURLs = [];
 var WebsiteComps = [];
 var WebsiteCats = [];
-var count = 0;
+var count = -1;
 
 // Load websites JSON
 loadWebsites(function(response) {
@@ -34,105 +34,129 @@ loadWebsites(function(response) {
 	}
 });
 
-// Fire listener if page is loaded from cache or instant bar
-chrome.tabs.onReplaced.addListener(function(addedTabId, removedTabId) {  
-  chrome.tabs.get(addedTabId, function(tab) {
-    chrome.tabs.onUpdated.dispatch(addedTabId, {"status": "loading"}, tab);
-    chrome.tabs.onUpdated.dispatch(addedTabId, {"status": "complete"}, tab);
-  });
-  
-});
+chrome.webRequest.onBeforeSendHeaders.addListener(function(details) {
+	if(details.tabId!=-1) {			
+		// Block header if user has blocked this tracker
+		if(BlockedData.indexOf(getDomain(details.url))!=-1) {
+			console.log("Request from " + getDomain(details.url) + " was blocked.");
+			return {cancel: details.url.indexOf(details.url) != -1};
+		}
+	}
+}, {urls: ["http://*/*", "https://*/*"]}, ["blocking"]);
 
-// Fire listener if page is loaded normally
-chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
-  // Do stuff if necessary
-  if(tab.url.indexOf("http://") == 0 || tab.url.indexOf("https://") == 0) {
-    if(changeInfo.status=="loading") {
-      var tabUrl = tab.url;
-      var tabTitle = tab.title;
-      var tabIcon = tab.favIconUrl;
-
-      // Create data if necessary
-      if(count==0) {
-        createData(ExtensionDataName);
-        createData(TrackerDataName);
-        createData(BlockedDataName);
-        createData(HistoryDataName);
-        createOptions("PrivacyOptions");
-        showTutorial = true;
-        console.log("Completed first-run setup.");
-      } else {
-      	showTutorial = false;
-      }
-
-      // Begin loading the page and recording stuff
-      console.log("Loading initiated: " + count + " -> " + (count+1));
-
-      // Get extension, tracker, blocked, and history data
-      chrome.storage.local.get(null, function(r) {
-        ExtensionData = r[ExtensionDataName];
-        TrackerData = r[TrackerDataName];
-        BlockedData = r[BlockedDataName];
-        HistoryData = r[HistoryDataName];
-      });
-      
-      // Create tmpcount so that it can be modified to sync with HistoryData IDs after page loads
-      var tmpcount = count;
-      document.addEventListener("doneLoading", function(a) {
-        tmpcount = parseInt(a.detail);
-      });
-
-      // Record tracker details
-      chrome.webRequest.onBeforeSendHeaders.addListener(function(details) {
-        if(details.tabId!=-1) {
-          if(getDomain(details.url)!=getDomain(tab.url) && getTrackerTitle(getDomain(details.url), false)!=getTrackerTitle(getDomain(tab.url), false)) {
-            if(TrackerData.indexOf(getDomain(details.url))==-1) {
-              TrackerData[TrackerData.length] = getDomain(details.url);
-            }
-            ExtensionData.push({id: tmpcount, tab: details.tabId, type: details.type, request: details.requestId, url: details.url, headers: details.requestHeaders, frameid: details.frameId, parentframeid: details.parentFrameId});
-          }
-
-          // Block header if necessary
-          if(BlockedData.indexOf(getDomain(details.url))!=-1) {
-            console.log("Request from " + getDomain(details.url) + " was blocked.");
-            return {cancel: details.url.indexOf(details.url) != -1};
-          }
-        }
-      }, {urls: ["<all_urls>"]}, ["blocking", "requestHeaders"]);
-
-      // Push extension and tracker data
-      pushData(TrackerDataName, TrackerData, "local", "Trackers saved.");
-      pushData(ExtensionDataName, ExtensionData, "local", "Data saved.");
-    } else if(changeInfo.status=="complete") {
-      console.log("Loading complete.");
-      
-      // Record page details
-      var date = new Date();
-      var minute = date.getMinutes();
-      var hour = date.getHours();
-      var day = date.getDate();
-      var weekday = date.getDay();
-      var month = date.getMonth();
-      var year = date.getFullYear();
+chrome.webRequest.onCompleted.addListener(function(details) {
+  if(details.tabId!=-1) {
+		// Create databases if this is the first run
+	  if(count==-1) {
+	    createData(ExtensionDataName, [], "local");
+	    createData(TrackerDataName, {}, "local");
+	    createData(BlockedDataName, [], "local");
+	    createData(HistoryDataName, [], "local");
+	    createOptions("PrivacyOptions", {log: true, listdomains: false, listresources: false}, "sync");
+	    showTutorial = true;
+	    console.log("Completed first-run setup.");
+	    count++;
+	  } else {
+			// Get Extension, Tracker, Blocked, and History Data
+			chrome.storage.local.get(null, function(r) {
+				// Save databases to corresponding variables
+			  ExtensionData = r[ExtensionDataName];
+			  TrackerData = r[TrackerDataName];
+			  BlockedData = r[BlockedDataName];
+			  HistoryData = r[HistoryDataName];
+			  
+			  // After data has been loaded, begin actually processing the header:
+				// Create tmpcount for HistoryData and ExtensionData entry IDs
+				var tmpcount = count + "-" + details.tabId;
 			
-      HistoryData.push({id: count, tab: tabId, type: "history", url: tab.url, title: tab.title, icon: tab.favIconUrl, topics: getWebsiteTopic(tab.url), minute: ("0" + minute).slice(-2), hour: hour, day: day, weekday: weekday, month: month, year: year});
+				// Check if new page is being loaded
+				var yesNew = false;
+				if(details.type=="main_frame") {
+					if(ExtensionData[ExtensionData.length-1]!=null && ExtensionData[ExtensionData.length-1].type!="main_frame") {
+						yesNew = true;
+					} else if(ExtensionData[ExtensionData.length-1]==null || ExtensionData[ExtensionData.length-1]=="") {
+						yesNew = true;
+					}
+				}
 
-      // Push history data
-      pushData(HistoryDataName, HistoryData, "local", "History saved.");
-      
-      // Save tab data
-      CurrentTab = tab;
-      
-      // Trigger doneLoading event listener
-      var doneLoadingEvent = new CustomEvent("doneLoading", {"detail": count.toString()})
-      document.dispatchEvent(doneLoadingEvent);
-      
-      // Once loading is complete, advance the count
-      // The placement of the count advancement is because advancing the count too early will cause some ExtensionData entries to have a different id from their corresponding HistoryData entry due to redirects when loading the page
-      count++;
-    }
-  }
-});
+				// If yes:
+				if(yesNew) {
+					// Advance count and write to console
+					console.log("Loading initiated: " + count + " -> " + (count+1));
+					count++;
+					tmpcount = count + "-" + details.tabId;
+
+					// Get current date/time information
+					var date = new Date();
+					var minute = date.getMinutes();
+					var hour = date.getHours();
+					var day = date.getDate();
+					var weekday = date.getDay();
+					var month = date.getMonth();
+					var year = date.getFullYear();
+
+					// Push new history entry
+					HistoryData.push({id: count + "-" + details.tabId, url: details.url, title: getWebsiteTitle(details.url), topics: getWebsiteTopic(details.url), icon: "http://www.google.com/s2/favicons?domain=" + getDomain(details.url), minute: ("0" + minute).slice(-2), hour: hour, day: day, weekday: weekday, month: month, year: year});
+
+					// Save updated HistoryData
+					pushData(HistoryDataName, HistoryData, "local", "History saved.");
+				}
+			
+				// Push the header itself to ExtensionData
+				ExtensionData.push({id: tmpcount, type: details.type, url: details.url});
+	
+				// Save updated ExtensionData
+				pushData(ExtensionDataName, ExtensionData, "local");
+			  
+				// Get history entry associated with this header	
+				var historyEntry = getHistoryEntry(tmpcount.slice(tmpcount.indexOf("-") + 1))[0];
+
+				// Get the human-readable name for this tracking company
+				var trackerTitle = getTrackerTitle(getDomain(details.url), false);
+				
+				// Get the human-readable tracking name for this page
+				if(historyEntry!=null && historyEntry!="") {
+					var historyTitle = getTrackerTitle(getDomain(historyEntry.url));
+				} else {
+					var historyTitle = null;
+				}
+
+			  // Check if this is a third-party tracker
+			  if(trackerTitle!=historyTitle) {
+					// If so, check if tracker has already been recorded
+					if(TrackerData[trackerTitle]=="" || TrackerData[trackerTitle]==null) {
+						// If not, create a new entry in TrackerData
+						TrackerData[trackerTitle] = {"domains": [], "websites": {"id": [], "domain": []}, "interests": []};
+					}
+
+					// Add the domain used for tracking from this company if necessary
+					if(TrackerData[trackerTitle].domains.indexOf(getDomain(details.url))==-1) {
+						TrackerData[trackerTitle].domains[TrackerData[trackerTitle].domains.length] = getDomain(details.url);
+					}
+			
+					// Check if a historyEntry has been created for this page (should be true, but just in case)
+					if(historyEntry!=null && historyEntry!="") {
+						// If so, add this page as a tracked website
+						var trackerIndex = TrackerData[trackerTitle].websites.domain.indexOf(getDomain(historyEntry.url));
+						if(trackerIndex!=-1) {
+							// Remove previous entry for tracked website if found
+							TrackerData[trackerTitle].websites.domain.splice(trackerIndex, 1);
+							TrackerData[trackerTitle].websites.id.splice(trackerIndex, 1);
+						}
+						TrackerData[trackerTitle].websites.id[TrackerData[trackerTitle].websites.id.length] = tmpcount;
+						TrackerData[trackerTitle].websites.domain[TrackerData[trackerTitle].websites.domain.length] = getDomain(historyEntry.url);
+				
+						// Add tracked interest(s) for this page
+						TrackerData[trackerTitle].interests.concat(historyEntry.topics);
+					}
+
+					// Save updated TrackerData
+					pushData(TrackerDataName, TrackerData, "local");
+				}
+			});
+		}
+	}
+}, {urls: ["http://*/*", "https://*/*"]});
 
 function loadWebsites(callback) {
   var xobj = new XMLHttpRequest();
@@ -188,6 +212,21 @@ function historySearch(searchID){
   return;
 }
 
+function getHistoryEntry(historyId) {
+  var historyid;
+  var historyindex;
+	
+  for(i=HistoryData.length-1; i>=0; i--) {
+    if(HistoryData[i].id.slice(HistoryData[i].id.indexOf("-") + 1)==historyId) {
+      historyid = HistoryData[i];
+      historyindex = HistoryData[i].id;
+      break;
+    }
+  }
+
+  return [historyid, historyindex];
+}
+
 function getWebsiteTopic(websiteurl) {
   // Get DMOZ data from Enclout API and category from Alchemy API
   var websitedmoz = getDMOZ(getDomain(websiteurl));
@@ -212,27 +251,33 @@ function getWebsiteTopic(websiteurl) {
   }
 }
 
+function getWebsiteTitle(websiteurl) {
+	var decentrequest = new XMLHttpRequest();
+	decentrequest.open("GET", "http://decenturl.com/api-title?u=" + websiteurl, false);
+	decentrequest.send();
+	return JSON.parse(decentrequest.response)[1];
+}
+
 function getDMOZ(domain) {
   // Call Enclout DMOZ API
 	var encloutrequest = new XMLHttpRequest();
 	encloutrequest.open("GET", "http://enclout.com/api/v1/dmoz/show.json?auth_token=e2zFHvVw12-mkof5Ja5x&url=" + domain, false);
-	encloutrequest.open("GET", "http://dmoz-api.appspot.com/category?url=" + domain, false);
 	encloutrequest.send();
-	var encloutxml = encloutrequest.responseXML;
+	var encloutxml = encloutrequest.responseText;
 	if(encloutxml=="" || encloutxml==null) {
 		return null;
 	}
-	var encloutrequestxml = xmlToJson(encloutxml);
+	var encloutrequestxml = JSON.parse(encloutxml);
 	
 	// Parse highest-level category string
-  if(encloutrequestxml.dmoz!="" && encloutrequestxml.dmoz!=null && encloutrequestxml.dmoz["dmoz-categories"]["dmoz-category"][0]!="" && encloutrequestxml.dmoz["dmoz-categories"]["dmoz-category"][0]!=null) {
-		var dmozcategory = encloutrequestxml.dmoz["dmoz-categories"]["dmoz-category"][0].Category["#text"];
+  if(encloutrequestxml["dmoz_categories"][0].Category!="NOT_FOUND") {
+		var dmozcategory = encloutrequestxml["dmoz_categories"][0].Category;
 		if(dmozcategory.indexOf(":") != -1) {
 		  dmozcategory = dmozcategory.slice(dmozcategory.lastIndexOf(":") + 2)
   	}
 		return dmozcategory;
 	} else {
-		return null;
+		return;
   }
 }
 
@@ -252,7 +297,7 @@ function getCategory(url) {
 		}
 		return alchemycategory;
 	} else {
-	  return null;
+	  return;
 	}
 }
 
@@ -347,9 +392,8 @@ function pushData(name, value, type, message) {
   }
 }
 
-function createData(name) {
-  var data = [];
-  pushData(name, data, "local", "Data created.");
+function createData(name, inputdata, type) {
+  pushData(name, inputdata, type, "Data created.");
 }
 
 function createOptions(name) {

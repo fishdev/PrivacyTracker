@@ -33,7 +33,6 @@ var ScriptHeaders = {};
 var ScriptHeaderArray;
 var StylesheetHeaders = {};
 var StylesheetHeaderArray;
-var SortedTrackersTmp = {};
 var SortedTrackers = {};
 var CurrentTab;
 var CurrentPage;
@@ -100,7 +99,8 @@ function getStarted() {
       // Display error message
       document.body.style.padding = 10;
       document.body.style.height = 400;
-      document.body.innerHTML = "<div id='error'><span class='title'><b>Oops!</b></span><img class='icon' src='../images/error.png' align=right><br /><br /><span class='message'>Something went seriously wrong when we tried to load your tracking info. If this happens again, please try reinstalling PrivacyTracker.</span></div><img class='loadericon' src='../images/loading.gif'>";
+      document.body.style.backgroundColor =  "#000000";
+      document.body.innerHTML = "<div id='error'><span class='title'><b>Oops!</b></span><br /><br /><span class='message'>Something just went seriously wrong. If this happens again, please try reinstalling PrivacyTracker.</span></div><img class='loadericon' src='../images/error.gif'>";
     }
   });
 }
@@ -129,10 +129,11 @@ function switchCurrent() {
 }
 
 function showCurrent() {
-  if(HistoryData=="" || HistoryData==null) {
+  if(HistoryData.length==0 || ExtensionData.length==0) {
     document.body.style.padding = 10;
     document.body.style.height = 400;
-    document.body.innerHTML = "<div id='error'><span class='title'><b>Just A Moment...</b></span><img class='icon' src='../images/info.png' align=right><br /><br /><span class='message'>We're still setting things up for you. Please keep browsing and try again after a few more pages.</span></div><img class='loadericon' src='../images/loading.gif'>";
+    document.body.style.backgroundColor = "#262626";
+    document.body.innerHTML = "<div id='error'><span class='title'><b>Just A Moment...</b></span><br /><br /><span class='message'>We're still setting things up for you. Please keep browsing and try again after you visit another page.</span></div><img class='loadericon' src='../images/loading.gif'>";
   } else {
     showList();
   }
@@ -149,10 +150,11 @@ function switchHistory() {
 }
 
 function showHistory() {
-  if(HistoryData=="" || HistoryData==null) {
+  if(HistoryData.length==0) {
     document.body.style.padding = 10;
     document.body.style.height = 400;
-    document.body.innerHTML = "<div id='error'><span class='title'><b>Just A Moment...</b></span><img class='icon' src='../images/info.png' align=right><br /><br /><span class='message'>We're still setting things up for you. Please keep browsing and try again after a few more pages.</span></div><img class='loadericon' src='../images/loading.gif'>";
+    document.body.style.backgroundColor = "#262626";
+    document.body.innerHTML = "<div id='error'><span class='title'><b>Just A Moment...</b></span><br /><br /><span class='message'>We're still setting things up for you. Please keep browsing and try again after you visit another page.</span></div><img class='loadericon' src='../images/loading.gif'>";
   } else if(!PTOptions.log) {
     var historyHTML = "<div id='history'><span id='title-history' class='title'>Browsing History</span><br />You've Disabled This</div><div id='scroller'><div style='padding: 10px; font-size: 11pt;'>You've disabled logging the pages you visit. You won't be able to view the trackers for each page in your browsing history until you enable history logging in Options.</div></div>";
 
@@ -234,10 +236,11 @@ function switchOverview() {
 }
 
 function showOverview() {
-  if(ExtensionData=="" || ExtensionData==null || TrackerData=="" || TrackerData==null || HistoryData=="" || HistoryData==null) {
+  if(HistoryData.length==0 || TrackerData.length==0) {
     document.body.style.padding = 10;
     document.body.style.height = 400;
-    document.body.innerHTML = "<div id='error'><span class='title'><b>Just A Moment...</b></span><img class='icon' src='../images/info.png' align=right><br /><br /><span class='message'>We're still setting things up for you. Please keep browsing and try again after a few more pages.</span></div><img class='loadericon' src='../images/loading.gif'>";
+    document.body.style.backgroundColor = "#262626";
+    document.body.innerHTML = "<div id='error'><span class='title'><b>Just A Moment...</b></span><br /><br /><span class='message'>We're still setting things up for you. Please keep browsing and try again after you visit another page.</span></div><img class='loadericon' src='../images/loading.gif'>";
   } else {
     if(Object.keys(SortedTrackers).length==0) {
       // Get list of trackers
@@ -247,7 +250,7 @@ function showOverview() {
     // Generate HTML from list of trackers
     var overviewHTML = "<div id='overview'><span id='title-overview' class='title'>" + Object.keys(SortedTrackers).length + " Website";
     if(Object.keys(SortedTrackers).length==1) {
-      overviewHTML += "is ";
+      overviewHTML += " is ";
     } else {
       overviewHTML += "s are ";
     }
@@ -306,6 +309,10 @@ function showOverview() {
       // Tidy up tracker entry
       overviewHTML += "<span id='" + tracker + "-entry-arrow' class='arrow-right-r'></span></div>";
     }
+    
+    if(Object.keys(SortedTrackers).length==0) {
+		  overviewHTML += "<div class='checkcirclesurroundings'><center><div class='checkcircle'>&#x2713</div></center><br /><div class='leftofcheckcircle'>There aren't any websites other than the ones you've visited that are tracking you across the web and may analyze your personal information.&nbsp;&nbsp</div></div>";
+	  }
 
     overviewHTML += "</span></div>";
 
@@ -359,7 +366,7 @@ function showTracker(trackerid) {
 
     // Get user-centered data
     var domaintracked = SortedTrackers[trackername].trackedwebsites;
-    var domaininterests = getTrackedInterests(domaintracked);
+    var domaininterests = getTrackedInterests(trackername);
 
     // Generate HTML based on data
     if(domaintracked!="" && domaintracked!=null) {
@@ -368,21 +375,22 @@ function showTracker(trackerid) {
       var overflowtrackerHTML = "";
       for(i=0; i<domaintracked.length; i++) {
         var today = new Date();
-        tmptrackerHTML += "<li><b><span title='" + HistoryData[domaintracked[i]].url + "'>" + background.getDomain(HistoryData[domaintracked[i]].url) + "</span></b>, which you visited ";
+        var trackedHistoryEntry = background.historySearch(domaintracked[i]);
+        tmptrackerHTML += "<li><b><span title='" + trackedHistoryEntry.url + "'>" + background.getDomain(trackedHistoryEntry.url) + "</span></b>, which you visited ";
 
         var pageTime = "AM";
-        var pageHour = HistoryData[domaintracked[i]].hour
+        var pageHour = trackedHistoryEntry.hour
         if(pageHour>12) {
           pageHour = pageHour - 12;
           pageTime = "PM";
         }
 
-        if(today.getDate()==HistoryData[domaintracked[i]].day && today.getMonth()==HistoryData[domaintracked[i]].month && today.getFullYear()==HistoryData[domaintracked[i]].year) {
+        if(today.getDate()==trackedHistoryEntry.day && today.getMonth()==trackedHistoryEntry.month && today.getFullYear()==trackedHistoryEntry.year) {
           tmptrackerHTML += "earlier today";
-        } else if(today.getDate()==(HistoryData[domaintracked[i]].day + 1) && today.getMonth()==HistoryData[domaintracked[i]].month && today.getFullYear()==HistoryData[domaintracked[i]].year) {
-          tmptrackerHTML += "yesterday at " + pageHour + ":" + HistoryData[domaintracked[i]].minute + " " + pageTime;
+        } else if(today.getDate()==(trackedHistoryEntry.day + 1) && today.getMonth()==trackedHistoryEntry.month && today.getFullYear()==trackedHistoryEntry.year) {
+          tmptrackerHTML += "yesterday at " + pageHour + ":" + trackedHistoryEntry.minute + " " + pageTime;
         } else {
-          tmptrackerHTML += "on " + parseWeekday(HistoryData[domaintracked[i]].weekday) + ", " + parseMonth(HistoryData[domaintracked[i]].month) + " " + HistoryData[domaintracked[i]].day + ", " + HistoryData[domaintracked[i]].year + " at " + pageHour + ":" + HistoryData[domaintracked[i]].minute + " " + pageTime;
+          tmptrackerHTML += "on " + parseWeekday(trackedHistoryEntry.weekday) + ", " + parseMonth(trackedHistoryEntry.month) + " " + trackedHistoryEntry.day + ", " + trackedHistoryEntry.year + " at " + pageHour + ":" + trackedHistoryEntry.minute + " " + pageTime;
         }
 
         tmptrackerHTML += "</li>";
@@ -490,53 +498,23 @@ function showTracker(trackerid) {
   }
 }
 
-function getTrackers() {
-  // Go through all headers
-  for(i=(ExtensionData.length-1); i>=0; i++) {
-    // Take the domain from this header and sort it as a tracker
-    sortTracker(i);
-  }
-
-  // Sort trackers by number of tracked requests
+function getTrackers() {  
+  // Sort trackers by number of tracked websites
   var sortable = [];
-  for(var tracker in SortedTrackersTmp) {
-    sortable.push([tracker, SortedTrackersTmp[tracker].trackedwebsites.length]);
+  var currentTitle = background.getTrackerTitle(background.getDomain(CurrentTab.url, false));
+  TrackerData = background.TrackerData;
+  
+  for(var tracker in TrackerData) {
+  	// Ensure that the tracker is a third-party, not the current page itself
+  	if(currentTitle!=tracker) {
+	    sortable.push([tracker, TrackerData[tracker].websites.id.length]);
+    }
   }
   sortable.sort(function(a, b) {return a[1] - b[1]});
 
   // Use sorted list to add trackers in order to final tracker list
   for(i=(sortable.length-1); i>=0; i--) {
-    SortedTrackers[sortable[i][0]] = SortedTrackersTmp[sortable[i][0]];
-  }
-}
-
-function sortTracker(i) {
-  var trackertitle = background.getTrackerTitle(i, true);
-
-  // Check for errors (empty or undefined titles)
-  if(trackertitle!="undefined" && trackertitle!="" && trackertitle!=null && trackertitle!="null") {
-    // Check if tracker entry already exists
-    if(SortedTrackersTmp[trackertitle]==""  || SortedTrackersTmp[trackertitle]==null) {
-      // If not, add it
-      SortedTrackersTmp[trackertitle] = {domains: [], trackedwebsites: []};
-    }
-    // Check if this domain is added
-    if(SortedTrackersTmp[trackertitle].domains.indexOf(background.getDomain(ExtensionData[i].url))==-1) {
-      // If not, add it
-      SortedTrackersTmp[trackertitle].domains[SortedTrackersTmp[trackertitle].domains.length] = background.getDomain(ExtensionData[i].url);
-    }
-    // Check if this tracked website is added
-    var alreadyAdded = false;
-    for(var j=0; j<SortedTrackersTmp[trackertitle].trackedwebsites.length; j++) {
-    	if(background.getDomain(HistoryData[SortedTrackersTmp[trackertitle].trackedwebsites[j]].url)==background.getDomain(background.historySearch(ExtensionData[i].id).url)) {
-    		alreadyAdded = true;
-    		break;
-    	}
-    }
-    // If not, add it
-    if(!alreadyAdded) {
-      SortedTrackersTmp[trackertitle].trackedwebsites[SortedTrackersTmp[trackertitle].trackedwebsites.length] = ExtensionData[i].id;
-    }
+    SortedTrackers[sortable[i][0]] = {domains: TrackerData[sortable[i][0]].domains, trackedwebsites: TrackerData[sortable[i][0]].websites.id};
   }
 }
 
@@ -948,19 +926,9 @@ function showCurrentTracker(typedomain) {
     trackerHTML += ", so " + domainname + " can track you.<br /><br />"
 
     // Add user-centered data
-    var domaintracked = getTrackedWebsites(domainbaseurl, headerstouse);
-    var domaininterests = getTrackedInterests(domaintracked);
+    var domaintracked = getTrackedWebsites(domainbaseurl);
+    var domaininterests = getTrackedInterests(domainbaseurl);
     var domainresources = getTrackedResources(domainbaseurl, headerstouse);
-
-    // Adds the current page if there are tracked interests
-    if(domaininterests.length>0) {
-      var tmpsitetopics = background.getWebsiteTopic(CurrentTab.url);
-      for(j=0; j<tmpsitetopics.length; j++) {
-        if(domaininterests.indexOf(tmpsitetopics[j])==-1) {
-          domaininterests[domaininterests.length] = tmpsitetopics[j];
-        }
-      }
-    }
 
     // Generate HTML based on data
     if(domaintracked!="" && domaintracked!=null) {
@@ -969,21 +937,21 @@ function showCurrentTracker(typedomain) {
       var overflowtrackerHTML = "";
       for(i=0; i<domaintracked.length; i++) {
         var today = new Date();
-        tmptrackerHTML += "<li><b><span title='" + HistoryData[domaintracked[i]].url + "'>" + background.getDomain(HistoryData[domaintracked[i]].url) + "</span></b>, which you visited ";
-
+        var trackedWebsiteHistory = background.historySearch(domaintracked[i]);
+        tmptrackerHTML += "<li><b><span title='" + trackedWebsiteHistory.url + "'>" + background.getDomain(trackedWebsiteHistory.url) + "</span></b>, which you visited ";
         var pageTime = "AM";
-        var pageHour = HistoryData[domaintracked[i]].hour
+        var pageHour = trackedWebsiteHistory.hour
         if(pageHour>12) {
           pageHour = pageHour - 12;
           pageTime = "PM";
         }
 
-        if(today.getDate()==HistoryData[domaintracked[i]].day && today.getMonth()==HistoryData[domaintracked[i]].month && today.getFullYear()==HistoryData[domaintracked[i]].year) {
+        if(today.getDate()==trackedWebsiteHistory.day && today.getMonth()==trackedWebsiteHistory.month && today.getFullYear()==trackedWebsiteHistory.year) {
           tmptrackerHTML += "earlier today";
-        } else if(today.getDate()==(HistoryData[domaintracked[i]].day + 1) && today.getMonth()==HistoryData[domaintracked[i]].month && today.getFullYear()==HistoryData[domaintracked[i]].year) {
-          tmptrackerHTML += "yesterday at " + pageHour + ":" + HistoryData[domaintracked[i]].minute + " " + pageTime;
+        } else if(today.getDate()==(trackedWebsiteHistory.day + 1) && today.getMonth()==trackedWebsiteHistory.month && today.getFullYear()==trackedWebsiteHistory.year) {
+          tmptrackerHTML += "yesterday at " + pageHour + ":" + trackedWebsiteHistory.minute + " " + pageTime;
         } else {
-          tmptrackerHTML += "on " + parseWeekday(HistoryData[domaintracked[i]].weekday) + ", " + parseMonth(HistoryData[domaintracked[i]].month) + " " + HistoryData[domaintracked[i]].day + ", " + HistoryData[domaintracked[i]].year + " at " + pageHour + ":" + HistoryData[domaintracked[i]].minute + " " + pageTime;
+          tmptrackerHTML += "on " + parseWeekday(trackedWebsiteHistory.weekday) + ", " + parseMonth(trackedWebsiteHistory.month) + " " + trackedWebsiteHistory.day + ", " + trackedWebsiteHistory.year + " at " + pageHour + ":" + trackedWebsiteHistory.minute + " " + pageTime;
         }
 
         tmptrackerHTML += "</li>";
@@ -1131,36 +1099,16 @@ function removeA(arr) {
   return arr;
 }
 
-function getTrackedWebsites(trackerdomain, headerstouse) {
-  var trackedwebsites = [];
-  var tmptrackedlist = [];
-
-  // Runs through ExtensionData to find other domains with same tracker
-  for(i=0; i<ExtensionData.length; i++) {
-    if(headerstouse[trackerdomain].domains.indexOf(background.getDomain(ExtensionData[i].url))!=-1 || trackerdomain==background.getTrackerTitle(i, true)) {
-    	var historyDomain = background.getDomain(background.historySearch(ExtensionData[i].id).url);
-      if(tmptrackedlist.indexOf(historyDomain)==-1 && historyDomain!=background.getDomain(CurrentTab.url)) {
-        trackedwebsites[trackedwebsites.length] = ExtensionData[i].id;
-        tmptrackedlist[tmptrackedlist.length] = historyDomain;
-      }
-    }
-  }
-  return trackedwebsites;
+function getTrackedWebsites(trackername) {
+	// Access TrackerData for tracked websites and reverse order so newest appear on top
+  var trackedWebsites = TrackerData[trackername].websites.id;
+  trackedWebsites.splice(TrackerData[trackername].websites.domain.indexOf(background.getDomain(CurrentTab.url)), 1);
+  return trackedWebsites.reverse();
 }
 
-function getTrackedInterests(trackedlist) {
-  var trackedinterests = [];
-
-  // Run through history entries of tracked websites for interests
-  for(i=0; i<trackedlist.length; i++) {
-    var tmpsitetopics = HistoryData[trackedlist[i]].topics;
-    var today = new Date();
-    if(getDayDiff(today, new Date(HistoryData[trackedlist[i]].year, HistoryData[trackedlist[i]].month, HistoryData[trackedlist[i]].day))<=14) {
-       trackedinterests.concat(tmpsitetopics);
-    } else {
-      break;
-    }
-  }
+function getTrackedInterests(trackername) {
+  // Access TrackerData for tracked interests
+  var trackedinterests = TrackerData[trackername].interests;
   
   // Return list of interests sorted by frequency (descending) with duplicates removed
   return sortFreqDupRemove(trackedinterests);
@@ -1222,37 +1170,22 @@ function findOccurrences(array, value) {
 
 function getHeaders() {
   // Create variables
-  var c = getHistoryId(CurrentTab.url);
-  ExtensionData = background.ExtensionData;
+  var historyEntryId = background.getHistoryEntry(CurrentTab.id)[1];
+  var currentTitle = background.getTrackerTitle(background.getDomain(CurrentTab.url, false));
 
   // Collect headers
   for(i=(ExtensionData.length-1); i>=0; i--) {
-    if(ExtensionData[i].id==c && ExtensionData[i].tab==CurrentTab.id && background.getTrackerTitle(background.getDomain(ExtensionData[i].url), false) != background.getTrackerTitle(CurrentTab.url, false)) {
+    if(ExtensionData[i].id==historyEntryId && background.getTrackerTitle(background.getDomain(ExtensionData[i].url), false) != currentTitle) {
       sortHeader(i);
     }
 
-    // Check if headers are too old and stop if so
-    var today = new Date();
-    if(background.historySearch(ExtensionData[i].id)!="" && background.historySearch(ExtensionData[i].id)!=null) {
-      if(getDayDiff(today, new Date(background.historySearch(ExtensionData[i].id).year, background.historySearch(ExtensionData[i].id).month, background.historySearch(ExtensionData[i].id).day))>1) {
-        return;
-      }
-    }
-  }
-}
-
-function getHistoryId(url) {
-  HistoryData = background.HistoryData;
-  var historyid;
-
-  for(i=HistoryData.length-1; i>=0; i--) {
-    if(HistoryData[i].url==CurrentTab.url && HistoryData[i].tab==CurrentTab.id) {
-      historyid = HistoryData[i].id;
+    // Check if headers are for a different history entry and stop and stop if so
+    if(ExtensionData[i].id!=historyEntryId) {
       break;
     }
   }
-
-  return historyid;
+  
+  return;
 }
 
 function sortHeader(i) {
@@ -1371,10 +1304,10 @@ function showHeaders(inputheaders, headermessage, nonemessage, type) {
         topTracker += "-top";
         i++;
       }
-
+			
       // Check for unsecure requests or blocked domain
       var requestNumU = getRequestNum(inputheaders, domain, "http:");
-      var trackedwebsites = getTrackedWebsites(domain, inputheaders);
+      var trackedwebsites = getTrackedWebsites(domain);
       var colorTracker = "";
       if(BlockedData.indexOf(inputheaders[domain].domains[0])>-1) {
         colorTracker = " style='color: gray'";
@@ -1450,12 +1383,6 @@ function getRequestNum(headers, domain, protocol) {
   }
 
   return requestCounter;
-}
-
-function getScore() {
-  // Get score
-
-  return 0;
 }
 
 function showList() {

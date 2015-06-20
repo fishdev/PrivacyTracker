@@ -1,7 +1,7 @@
 {
 	"manifest_version": 2,
 	"name": "PrivacyTracker",
-	"version": "0.4",
+	"version": "0.5",
 	"description": "A browser plugin to view and control tracking websites",
 	"icons": {
 		"16": "images/16.png",
@@ -13,7 +13,7 @@
 		"512": "images/512.png"
 	},
   "background": {
-    "scripts": ["scripts/background.js"],
+    "scripts": ["scripts/newengine-background.js"],
     "persistent": true
   },
 	"permissions": [
