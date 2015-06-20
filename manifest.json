@@ -1,7 +1,7 @@
 {
 	"manifest_version": 2,
 	"name": "PrivacyTracker",
-	"version": "0.5-PRERELEASE",
+	"version": "0.5",
 	"description": "A browser plugin to view and control tracking websites",
 	"icons": {
 		"16": "images/16.png",
