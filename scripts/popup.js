@@ -42,6 +42,7 @@ function getGoing() {
   // Check Internet connection
   if(navigator.onLine) {
     // Start displaying page
+    originalHTML = document.body.innerHTML;
     getStarted();
   } else {
     // Display error message
@@ -106,8 +107,10 @@ function getStarted() {
   });
 }
 
-window.addEventListener("load", function() {
-  // Bind tabs and links
+window.addEventListener("load", bindWindow, false);
+
+function bindWindow() {
+	// Bind tabs and links
   document.getElementById("tab-current").addEventListener("click", switchCurrent, false);
   document.getElementById("tab-history").addEventListener("click", switchHistory, false);
   document.getElementById("tab-overview").addEventListener("click", switchOverview, false);
@@ -117,7 +120,7 @@ window.addEventListener("load", function() {
   document.getElementById("link-about").addEventListener("click", switchAbout, false);
 
   getGoing();
-}, false);
+}
 
 function switchCurrent() {
   document.getElementById("tab-current").className = "tab-active";
@@ -126,7 +129,6 @@ function switchCurrent() {
   document.getElementById("link-help").className = "";
   document.getElementById("link-options").className = "";
   document.getElementById("link-about").className = "";
-  originalHTML = document.body.innerHTML;
   showCurrent();
 }
 
@@ -1122,6 +1124,7 @@ function switchTutorial(currentId) {
 				switchTutorial(nextId);
 			} else {
 				this.parentNode.removeChild(this);
+				bindWindow();
 			}
 		});
 	}
