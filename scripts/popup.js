@@ -417,7 +417,7 @@ function showTracker(trackerid) {
       }
       
       if(domaintracked.length > 5) {
-      	tmptrackerHTML += "<span id='" + domainname + "overflow'><li><a id='" + domainname + "showmore'><i>Show More...</i></a></li></span>";
+      	trackerHTML += "<span id='" + domainname + "overflow'><li><a id='" + domainname + "showmore'><i>Show More...</i></a></li></span>";
     	}
     	
       trackerHTML += "</ul>";
@@ -436,7 +436,7 @@ function showTracker(trackerid) {
         }
       }
       
-      if(domaintracked.length > 5) {
+      if(domaininterests.length > 5) {
       	tmptrackerHTML += "<span id='" + domainname + "overinterest'><li><a id='" + domainname + "interestmore'><i>Show More...</i></a></li></span>";
     	}
       
@@ -1033,7 +1033,7 @@ function showCurrentTracker(typedomain) {
         }
       }
       
-      if(domaintracked.length > 5) {
+      if(domaininterests.length > 5) {
       	tmptrackerHTML += "<span id='" + domainname + "overinterest'><li><a id='" + domainname + "interestmore'><i>Show More...</i></a></li></span>";
     	}
       
