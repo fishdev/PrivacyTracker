@@ -126,7 +126,7 @@ function switchCurrent() {
   if(PTOptions.log) {
 	  document.getElementById("tab-history").addEventListener("click", switchHistory, false);
 	  document.getElementById("tab-history").className = "tab";
-  } else {
+  } else if(document.getElementById("tab-history")!=null) {
   	document.getElementById("tab-history").parentNode.removeChild(document.getElementById("tab-history"));
 	}
   document.getElementById("tab-overview").className = "tab";
@@ -338,7 +338,7 @@ function showOverview() {
         showTracker(this.id);
       }, false);
     }
-    var trackertitems = document.getElementsByClassName("tracker-top");
+    trackertitems = document.getElementsByClassName("tracker-top");
     for(i=0; i<trackertitems.length; i++) {
       document.getElementById(trackertitems[i].id).addEventListener("click", function() {
         showTracker(this.id);
@@ -383,9 +383,11 @@ function showTracker(trackerid) {
     // Generate HTML based on data
     if(domaintracked!="" && domaintracked!=null) {
       trackerHTML += domainname + " knows that you visited:<ul>";
-      var tmptrackerHTML = "";
       var overflowtrackerHTML = "";
+      var overflowinterestHTML = "";
       for(i=0; i<domaintracked.length; i++) {
+        var tmptrackerHTML = "";
+        
         var today = new Date();
         var trackedHistoryEntry = background.historySearch(domaintracked[i]);
         tmptrackerHTML += "<li><b><span title='" + trackedHistoryEntry.url + "'>" + background.getDomain(trackedHistoryEntry.url) + "</span></b>, which you visited ";
@@ -415,16 +417,29 @@ function showTracker(trackerid) {
       }
       
       if(domaintracked.length > 5) {
-      	trackerHTML += "<span id='" + domainname + "overflow'><li><a id='" + domainname + "showmore'>Show More...</a></li></span>";
+      	tmptrackerHTML += "<span id='" + domainname + "overflow'><li><a id='" + domainname + "showmore'><i>Show More...</i></a></li></span>";
     	}
     	
       trackerHTML += "</ul>";
     }
     if(domaininterests!="" && domaininterests!=null) {
+    	var tmptrackerHTML;
+    	
       trackerHTML += domainname + " probably knows that you're interested in:<ul>";
       for(i=0; i<domaininterests.length; i++) {
         trackerHTML += "<li>" + domaininterests[i] + "</li>";
+              	
+      	if(i < 5) {
+          trackerHTML += tmptrackerHTML;
+        } else {
+          overflowinterestHTML += tmptrackerHTML;
+        }
       }
+      
+      if(domaintracked.length > 5) {
+      	tmptrackerHTML += "<span id='" + domainname + "overinterest'><li><a id='" + domainname + "interestmore'><i>Show More...</i></a></li></span>";
+    	}
+      
       trackerHTML += "</ul>";
     }
     if(PTOptions.listdomains) {
@@ -496,9 +511,16 @@ function showTracker(trackerid) {
     }, false);
     
     // Bind overflow button for tracked websites if needed
-    if(domaintracked.length > 0 && domaintracked.length > 5) {
+    if(domaintracked.length > 5) {
       document.getElementById(domainname + "showmore").addEventListener("click", function() {
         document.getElementById(domainname + "overflow").innerHTML = overflowtrackerHTML;
+      }, false);
+    }
+    
+    // Bind overflow button for tracked interests if needed
+    if(domaininterests.length > 5) {
+    	 document.getElementById(domainname + "interestmore").addEventListener("click", function() {
+        document.getElementById(domainname + "overinterest").innerHTML = overflowinterestHTML;
       }, false);
     }
   } else {
@@ -959,9 +981,11 @@ function showCurrentTracker(typedomain) {
     // Generate HTML based on data
     if(domaintracked!="" && domaintracked!=null) {
       trackerHTML += domainname + " also knows that you visited:<ul>";
-      var tmptrackerHTML = "";
       var overflowtrackerHTML = "";
+      var overflowinterestHTML = "";
       for(i=0; i<domaintracked.length; i++) {
+        var tmptrackerHTML = "";
+        
         var today = new Date();
         var trackedWebsiteHistory = background.historySearch(domaintracked[i]);
         tmptrackerHTML += "<li><b><span title='" + trackedWebsiteHistory.url + "'>" + background.getDomain(trackedWebsiteHistory.url) + "</span></b>, which you visited ";
@@ -990,16 +1014,29 @@ function showCurrentTracker(typedomain) {
       }
       
       if(domaintracked.length > 5) {
-      	trackerHTML += "<span id='" + domainname + "overflow'><li><a id='" + domainname + "showmore'>Show More...</a></li></span>";
+      	trackerHTML += "<span id='" + domainname + "overflow'><li><a id='" + domainname + "showmore'><i>Show More...</i></a></li></span>";
     	}
     	
       trackerHTML += "</ul>";
     }
     if(domaininterests!="" && domaininterests!=null) {
+      var tmptrackerHTML;
+    	
       trackerHTML += domainname + " probably knows that you're interested in:<ul>";
       for(i=0; i<domaininterests.length; i++) {
         trackerHTML += "<li>" + domaininterests[i] + "</li>";
+              	
+      	if(i < 5) {
+          trackerHTML += tmptrackerHTML;
+        } else {
+          overflowinterestHTML += tmptrackerHTML;
+        }
       }
+      
+      if(domaintracked.length > 5) {
+      	tmptrackerHTML += "<span id='" + domainname + "overinterest'><li><a id='" + domainname + "interestmore'><i>Show More...</i></a></li></span>";
+    	}
+      
       trackerHTML += "</ul>";
     }
     if(PTOptions.listdomains) {
@@ -1098,9 +1135,16 @@ function showCurrentTracker(typedomain) {
     }, false);
     
     // Bind overflow button for tracked websites if needed
-    if(domaintracked.length > 0 && domaintracked.length > 5) {
+    if(domaintracked.length > 5) {
       document.getElementById(domainname + "showmore").addEventListener("click", function() {
         document.getElementById(domainname + "overflow").innerHTML = overflowtrackerHTML;
+      }, false);
+    }
+    
+    // Bind overflow button for tracked interests if needed
+    if(domaininterests.length > 5) {
+    	 document.getElementById(domainname + "interestmore").addEventListener("click", function() {
+        document.getElementById(domainname + "overinterest").innerHTML = overflowinterestHTML;
       }, false);
     }
   } else {
