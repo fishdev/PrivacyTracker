@@ -523,12 +523,22 @@ function showTracker(trackerid) {
         document.getElementById(domainname + "overinterest").innerHTML = overflowinterestHTML;
       }, false);
     }
+    
+    // Enable CSS3 transition
+    document.getElementById(trackername + "-info").style.maxHeight = "0px";
+    window.getComputedStyle(document.getElementById(trackername + "-info")).maxHeight;
+    document.getElementById(trackername + "-info").style.maxHeight = "600px";
+    document.getElementById(trackername + "-info").style.transition = "max-height 250ms ease-out";
   } else {
-    document.getElementById(trackerid + "-arrow").className = "arrow-right-r";
+    document.getElementById(trackername + "-entry-arrow").className = "arrow-right-r";
 
     // Hide expanded tracker details
     var trackerinfotoremove = document.getElementById(trackername + "-info");
-    trackerinfotoremove.parentNode.removeChild(trackerinfotoremove);
+    trackerinfotoremove.style.maxHeight = "0px";
+    window.getComputedStyle(trackerinfotoremove).maxHeight;
+    setTimeout(function () {
+			trackerinfotoremove.parentNode.removeChild(trackerinfotoremove);
+		}, 250);
   }
 }
 
@@ -863,12 +873,22 @@ function showCurrentSort(sortid) {
         showCurrentTracker(this.id);
       }, false);
     }
+    
+    // Enable CSS3 transition
+    document.getElementById(sortid + "info").style.maxHeight = "0px";
+    window.getComputedStyle(document.getElementById(sortid + "info")).maxHeight;
+    document.getElementById(sortid + "info").style.maxHeight = "600px";
+    document.getElementById(sortid + "info").style.transition = "max-height 250ms ease-out";
   } else {
     document.getElementById(sortid + "arrow").className = "arrow-right";
 
     // Hide extended information
     var sortiteminfotoremove = document.getElementById(sortid + "info");
-    sortiteminfotoremove.parentNode.removeChild(sortiteminfotoremove);
+    sortiteminfotoremove.style.maxHeight = "0px";
+    window.getComputedStyle(sortiteminfotoremove).maxHeight;
+    setTimeout(function () {
+			sortiteminfotoremove.parentNode.removeChild(sortiteminfotoremove);
+		}, 250);
   }
 }
 
@@ -1147,12 +1167,22 @@ function showCurrentTracker(typedomain) {
         document.getElementById(domainname + "overinterest").innerHTML = overflowinterestHTML;
       }, false);
     }
+    
+    // Enable CSS3 transition
+    document.getElementById(typedomain + "-info").style.maxHeight = "0px";
+    window.getComputedStyle(document.getElementById(typedomain + "-info")).maxHeight;
+    document.getElementById(typedomain + "-info").style.maxHeight = "600px";
+    document.getElementById(typedomain + "-info").style.transition = "max-height 250ms ease-out";
   } else {
     document.getElementById(typedomain + "-arrow").className = "arrow-right-r";
 
     // Hide expanded tracker details
     var trackerinfotoremove = document.getElementById(typedomain + "-info");
-    trackerinfotoremove.parentNode.removeChild(trackerinfotoremove);
+    trackerinfotoremove.style.maxHeight = "0px";
+    window.getComputedStyle(trackerinfotoremove).maxHeight;
+    setTimeout(function () {
+			trackerinfotoremove.parentNode.removeChild(trackerinfotoremove);
+		}, 250);
   }
 }
 
