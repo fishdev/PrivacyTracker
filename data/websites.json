@@ -1552,7 +1552,7 @@
   {"GfK Group": {"http://www.gfk.com/": [
     "daphnecm.com", "gfk.com", "gfkdaphne.com"
   ]}},
-  {"GitHub": {"https://github.com/": ["gaug.es"]}},
+  {"GitHub": {"https://github.com/": ["gaug.es", "githubapp.com"]}},
   {"Go Daddy": {"http://www.godaddy.com/": [
     "godaddy.com", "trafficfacts.com"
   ]}},

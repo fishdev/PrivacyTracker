@@ -264,7 +264,7 @@ function getDMOZ(domain) {
 	encloutrequest.open("GET", "http://enclout.com/api/v1/dmoz/show.json?auth_token=e2zFHvVw12-mkof5Ja5x&url=" + domain, false);
 	encloutrequest.send();
 	var encloutxml = encloutrequest.responseText;
-	if(encloutxml=="" || encloutxml==null) {
+	if(encloutxml=="" || encloutxml==null || encloutrequestxml["dmoz_categories"]==null || encloutrequestxml["dmoz_categories"]=="") {
 		return null;
 	}
 	var encloutrequestxml = JSON.parse(encloutxml);
@@ -397,6 +397,6 @@ function createData(name, inputdata, type) {
 }
 
 function createOptions(name) {
-  var data = {log: true, listdomains: false, listresources: false};
+  var data = {log: false, listdomains: false, listresources: false};
   pushData(name, data, "sync", "Options created.");
 }

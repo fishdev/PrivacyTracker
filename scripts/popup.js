@@ -36,6 +36,7 @@ var StylesheetHeaderArray;
 var SortedTrackers = {};
 var CurrentTab;
 var CurrentPage;
+var originalHTML;
 
 function getGoing() {
   // Check Internet connection
@@ -125,6 +126,7 @@ function switchCurrent() {
   document.getElementById("link-help").className = "";
   document.getElementById("link-options").className = "";
   document.getElementById("link-about").className = "";
+  originalHTML = document.body.innerHTML;
   showCurrent();
 }
 
@@ -599,7 +601,7 @@ function switchView(type) {
   if(type=="category") {
     // Check for nothing
     if((TrackingHeaderArray.count + AdvertisingHeaderArray.count + MainHeaderArray.count + ImageHeaderArray.count + ScriptHeaderArray.count + StylesheetHeaderArray.count)==0) {
-      viewHTML += "<div class='checkcirclesurroundings'><center><div class='checkcircle'>&#x2713</div></center><br /><div class='leftofcheckcircle'>There aren't any websites other than <b>" + background.getDomain(CurrentTab.url) + "</b> that know you visited this page and may analyze this information.&nbsp;&nbsp</div></div>";
+      viewHTML += "<div class='checkcirclesurroundings'><center><div class='checkcircle'>&#x2713</div></center><br /><div class='leftofcheckcircle'>There aren't any websites other than <b>" + background.getTrackerTitle(background.getDomain(CurrentTab.url)) + "</b> that know you visited this page and may analyze this information.&nbsp;&nbsp</div></div>";
     }
 
     // Add categories
@@ -662,6 +664,20 @@ function switchView(type) {
     }, false);
     colorSortNum(sortitems[i].id);
   }
+	
+  // Display tutorial if necessary
+  if(showTutorial) {
+  	// Show tutorial HTML
+		var tutorialHTML = "<img src='../images/tutorial1.png' class='tutorial' id='tutorial1'></img>";
+		document.body.innerHTML += tutorialHTML;
+		
+		// Run recursive function for next button
+		switchTutorial(1);
+		
+		// Set showTutorial to false;
+  	showTutorial = false;
+  	background.showTutorial = false;
+	}
 }
 
 function colorSortNum(categoryid) {
@@ -1086,6 +1102,31 @@ function showCurrentTracker(typedomain) {
   }
 }
 
+function switchTutorial(currentId) {
+	// Bind tutoral elements
+	var tutorial = document.getElementsByClassName("tutorial");
+	for(i=0; i<tutorial.length; i++) {
+    document.getElementById(tutorial[i].id).addEventListener("click", function() {
+    	if(currentId < 7) {
+		  	var nextId = parseInt(currentId) + 1;
+		    var nextSrc = "../images/tutorial" + nextId;
+			
+				if(nextId==5 && (TrackingHeaderArray.count + AdvertisingHeaderArray.count + MainHeaderArray.count + ImageHeaderArray.count + ScriptHeaderArray.count + StylesheetHeaderArray.count)==0) {
+					nextSrc += "-notrackers";
+				} else if(nextId==5 && (TrackingHeaderArray.count + AdvertisingHeaderArray.count + MainHeaderArray.count + ImageHeaderArray.count + ScriptHeaderArray.count + StylesheetHeaderArray.count) > 0) {
+					nextSrc +="-trackers";
+				}
+			
+				nextSrc += ".png";
+				this.src = nextSrc;
+				switchTutorial(nextId);
+			} else {
+				this.parentNode.removeChild(this);
+			}
+		});
+	}
+}
+
 function removeA(arr) {
   var what, a = arguments, L = a.length, ax;
 
@@ -1421,9 +1462,30 @@ function switchHelp() {
 }
 
 function showHelp() {
-  help = "<div id='container'><div id='scroller'><div id='elevenpt'>If you are unsure about what some of the features of PrivacyTracker do, this section will help.<br /><br /><b>Color Coded Categories</b><br />The up to three headings you see when you open up PrivacyTracker group websites that track you into categories. They are each colored with a shade of red, which is indicative of the number of websites listed under the category. If the number is very high, the entire category heading will be bolded.<br /><br /><b>Tracker Listings</b><br />Under each category is a list of websites and companies that are tracking you on a webpage. The name of the website is shown in bold, with other pages the tracker knows you visited below the name. If the name is shown in red, the tracker is unsecurely connected to the webpage, so your personal information is not protected and could be stolen. If the tracker name is gray, you've blocked the tracker.</div></div></div>";
+	// Show help information
+  help = "<div id='container'><div id='scroller'><div id='elevenpt'>Whenever you visit a website, companies that you've most likely never heard of are secretly collecting your information. They build complex, hidden profiles about you based on your interests and often sell your personal data. This happens on pretty much every website that you visit, and there isn't much you can do about it. But with PrivacyTracker, you can find out exactly who's tracking you and easily prevent creepy companies from collecting your data.<br /><br />PrivacyTracker is really easy to use, but this section is available at any time in case you're having trouble. The best way to learn the basics, though, is to take a look at our tutorial.<br /><br /><button class='optionsbutton' id='showtutorial'>Show Tutorial</button><br /><br /><b>How Tracking Works</b><br />When you go to any webpage in your browser, things like images, text, and video are sent over the Internet to your computer through HTTP headers. For most sites, though, there are headers sent for scripts that are used to track you. These scripts report your activities on a webpage to the tracking company, which, based on the sites you visit, determines what you like/dislike, then shows you relevant ads on other websites. The problem is that this tracking is really creepy, and can result in serious problems like identity theft and phishing attacks. PrivacyTracker empowers you to keep your data safe and secure by analyzing the content of HTTP headers to display a list of trackers for each webpage, and blocks HTTP headers if you want. However, PrivacyTracker still can't control first-party tracking (when the website you're actually on tracks you, like Google when you're visiting google.com), which is unavoidable when you visit any page.<br /><br /><b>How to Use PrivacyTracker</b><br /><i>Current Page: </i>The tab that you see when you open PrivacyTracker shows you a list of the companies that know you visited the current page. The companies that track you are grouped into categories (which are color-coded: see below) based on why they're tracking you. Some trackers simply analyze and sell your data, while others might be displaying targeted ads on a website.<br /><br /><i>Color-Coded Headings: </i>There are up to four headings that you see when you open up PrivacyTracker, which group websites that track you into categories. They are each colored with a shade of red, which is indicative of the number of websites listed under the category. If the number is very high, the entire category heading will be bolded.<br /><br /><i>Information about Trackers: </i>Under each category is a list of websites and companies that are tracking you on a webpage. The name of the website is shown in bold, with other pages the tracker knows you visited below the name. If the name is shown in red, the tracker is unsecurely connected to the webpage, so your personal information is not protected and could be stolen. If the tracker name is gray, you've blocked the tracker. When you click on the tracker's name, you'll see more information about which sites they know you visited and what they've guessed you like. If you think it's super creepy and want them to stop tracking you, just hit the giant blue switch that says 'Tracking' (it will change to 'Blocking').<br /><br /><i>Overview: </i>The second tab at the top of the PrivacyTracker popup window shows you a list of every single company that has ever collected information about you. Just like in the Current Page tab, blocked trackers are shown in gray and you can click on the tracker's name for more information and the option to block the tracker<br /><br />If you need any other information, you can head to the <a class='about-link' id='http://fishdev.github.io/PrivacyTracker/'>PrivacyTracker website</a>.</div></div></div>";
   document.getElementById("content").innerHTML = help;
   document.getElementById("scroller").style.height = "487px";
+  
+  // Bind tutorial button
+  document.getElementById("showtutorial").addEventListener("click", function() {
+  	showTutorial = true;
+  	document.body.innerHTML = originalHTML;
+  	showCurrent();
+	});
+	
+	// Bind links
+  var aboutlinks = document.getElementsByClassName("about-link");
+  for(j=0; j<aboutlinks.length; j++) {
+    document.getElementById(aboutlinks[j].id).addEventListener("click", function() {
+      chrome.tabs.update({url: this.id, selected: true});
+      chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
+        if(changeInfo.status=="loading") {
+          window.close();
+        }
+      });
+    }, false);
+  }
 }
 
 function switchOptions() {
@@ -1441,15 +1503,15 @@ function showOptions() {
   if(PTOptions.log) {
     options += " checked";
   }
-  options += ">Log tracking history in the background</input><br /><button id='optionsclearhistory' class='optionsbutton'>Clear stored history</button><br /><br /><input type='checkbox' name='listresources' value='valueresources'";
+  options += ">Show 'History' tab to view past pages you've visited</input><br /><button id='optionsclearhistory' class='optionsbutton'>Clear stored history</button><br /><br /><input type='checkbox' name='listresources' value='valueresources'";
   if(PTOptions.listresources) {
     options += " checked";
   }
-  options += ">Show list of resources provided for each tracker</input><br /><input type='checkbox' name='listdomains' value='valuedomains'";
+  options += ">Show list of resources provided by each tracker</input><br /><input type='checkbox' name='listdomains' value='valuedomains'";
   if(PTOptions.listdomains) {
     options += " checked";
   }
-  options += ">Show all domain URLs used by tracking companies</input><br /><br /><div id='optionssubmit' class='optionsbutton'>Save</div></form></div></div></div>";
+  options += ">Show domains used by each tracker</input><br /><br /><div id='optionssubmit' class='optionsbutton'>Save</div></form></div></div></div>";
 
   document.getElementById("content").innerHTML = options;
   document.getElementById("scroller").style.height = "487px";
@@ -1502,14 +1564,14 @@ function showAbout() {
   
   // Bind links
   var aboutlinks = document.getElementsByClassName("about-link");
-    for(j=0; j<aboutlinks.length; j++) {
-      document.getElementById(aboutlinks[j].id).addEventListener("click", function() {
-        chrome.tabs.update({url: this.id, selected: true});
-        chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
-          if(changeInfo.status=="loading") {
-            window.close();
-          }
-        });
-      }, false);
-    }
+  for(j=0; j<aboutlinks.length; j++) {
+    document.getElementById(aboutlinks[j].id).addEventListener("click", function() {
+      chrome.tabs.update({url: this.id, selected: true});
+      chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
+        if(changeInfo.status=="loading") {
+          window.close();
+        }
+      });
+    }, false);
+  }
 }
