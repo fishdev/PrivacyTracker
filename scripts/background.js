@@ -229,7 +229,7 @@ function getHistoryEntry(historyId) {
 
 function getWebsiteTopic(websiteurl) {
   // Get DMOZ data from Enclout API and category from Alchemy API
-  var websitedmoz = /*getDMOZ(getDomain(websiteurl))*/null;
+  var websitedmoz = getDMOZ(getDomain(websiteurl));
   var websitecategory = getCategory(websiteurl);
   
   // Create array for two website topics
