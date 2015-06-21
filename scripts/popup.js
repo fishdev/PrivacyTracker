@@ -112,7 +112,6 @@ window.addEventListener("load", bindWindow, false);
 function bindWindow() {
 	// Bind tabs and links
   document.getElementById("tab-current").addEventListener("click", switchCurrent, false);
-  document.getElementById("tab-history").addEventListener("click", switchHistory, false);
   document.getElementById("tab-overview").addEventListener("click", switchOverview, false);
 
   document.getElementById("link-help").addEventListener("click", switchHelp, false);
@@ -124,7 +123,12 @@ function bindWindow() {
 
 function switchCurrent() {
   document.getElementById("tab-current").className = "tab-active";
-  document.getElementById("tab-history").className = "tab";
+  if(PTOptions.log) {
+	  document.getElementById("tab-history").addEventListener("click", switchHistory, false);
+	  document.getElementById("tab-history").className = "tab";
+  } else {
+  	document.getElementById("tab-history").parentNode.removeChild(document.getElementById("tab-history"));
+	}
   document.getElementById("tab-overview").className = "tab";
   document.getElementById("link-help").className = "";
   document.getElementById("link-options").className = "";
@@ -145,7 +149,9 @@ function showCurrent() {
 
 function switchHistory() {
   document.getElementById("tab-current").className = "tab";
-  document.getElementById("tab-history").className = "tab-active";
+  if(PTOptions.log) {
+	  document.getElementById("tab-history").className = "tab-active";
+  }
   document.getElementById("tab-overview").className = "tab";
   document.getElementById("link-help").className = "";
   document.getElementById("link-options").className = "";
@@ -231,7 +237,9 @@ function showHistory() {
 
 function switchOverview() {
   document.getElementById("tab-current").className = "tab";
-  document.getElementById("tab-history").className = "tab";
+  if(PTOptions.log) {
+	  document.getElementById("tab-history").className = "tab";
+  }
   document.getElementById("tab-overview").className = "tab-active";
   document.getElementById("link-help").className = "";
   document.getElementById("link-options").className = "";
@@ -1456,7 +1464,9 @@ function showList() {
 
 function switchHelp() {
   document.getElementById("tab-current").className = "tab";
-  document.getElementById("tab-history").className = "tab";
+  if(PTOptions.log) {
+	  document.getElementById("tab-history").className = "tab";
+  }
   document.getElementById("tab-overview").className = "tab";
   document.getElementById("link-help").className = "selected";
   document.getElementById("link-options").className = "";
@@ -1493,7 +1503,9 @@ function showHelp() {
 
 function switchOptions() {
   document.getElementById("tab-current").className = "tab";
-  document.getElementById("tab-history").className = "tab";
+  if(PTOptions.log) {
+	  document.getElementById("tab-history").className = "tab";
+  }
   document.getElementById("tab-overview").className = "tab";
   document.getElementById("link-help").className = "";
   document.getElementById("link-options").className = "selected";
@@ -1552,7 +1564,9 @@ function showOptions() {
 
 function switchAbout() {
   document.getElementById("tab-current").className = "tab";
-  document.getElementById("tab-history").className = "tab";
+  if(PTOptions.log) {
+	  document.getElementById("tab-history").className = "tab";
+  }
   document.getElementById("tab-overview").className = "tab";
   document.getElementById("link-help").className = "";
   document.getElementById("link-options").className = "";
