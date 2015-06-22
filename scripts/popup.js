@@ -37,12 +37,14 @@ var SortedTrackers = {};
 var CurrentTab;
 var CurrentPage;
 var originalHTML;
+var headerHTML;
 
 function getGoing() {
   // Check Internet connection
   if(navigator.onLine) {
     // Start displaying page
     originalHTML = document.body.innerHTML;
+    headerHTML = document.getElementById("header").innerHTML;
     getStarted();
   } else {
     // Display error message
@@ -124,6 +126,7 @@ function bindWindow() {
 function switchCurrent() {
   document.getElementById("tab-current").className = "tab-active";
   if(PTOptions.log) {
+  	document.getElementById("header").innerHTML = headerHTML;
 	  document.getElementById("tab-history").addEventListener("click", switchHistory, false);
 	  document.getElementById("tab-history").className = "tab";
   } else if(document.getElementById("tab-history")!=null) {
@@ -232,6 +235,11 @@ function showHistory() {
         });
       }, false);
     }
+    
+    // Enable CSS3 transition
+		document.getElementById("scroller").style.opacity = 0;
+		window.getComputedStyle(document.getElementById("scroller")).opacity;
+		document.getElementById("scroller").style.opacity = 1;
   }
 }
 
@@ -344,6 +352,11 @@ function showOverview() {
         showTracker(this.id);
       }, false);
     }
+    
+    // Enable CSS3 transition
+		document.getElementById("scroller").style.opacity = 0;
+		window.getComputedStyle(document.getElementById("scroller")).opacity;
+		document.getElementById("scroller").style.opacity = 1;
   }
 }
 
@@ -713,6 +726,11 @@ function switchView(type) {
 		var tutorialHTML = "<img src='../images/tutorial1.png' class='tutorial' id='tutorial1'></img>";
 		document.body.innerHTML += tutorialHTML;
 		
+		// Enable CSS3 transition
+		document.getElementById("tutorial1").style.opacity = 0;
+		window.getComputedStyle(document.getElementById("tutorial1")).opacity;
+		document.getElementById("tutorial1").style.opacity = 1;
+		
 		// Run recursive function for next button
 		switchTutorial(1);
 		
@@ -720,6 +738,11 @@ function switchView(type) {
   	showTutorial = false;
   	background.showTutorial = false;
 	}
+	
+	// Enable CSS3 transition
+	document.getElementById("container").style.opacity = 0;
+  window.getComputedStyle(document.getElementById("container")).opacity;
+  document.getElementById("container").style.opacity = 1;
 }
 
 function colorSortNum(categoryid) {
@@ -1202,11 +1225,29 @@ function switchTutorial(currentId) {
 				}
 			
 				nextSrc += ".png";
-				this.src = nextSrc;
-				switchTutorial(nextId);
+				
+				// Show tutorial HTML
+				var element = this;
+				window.getComputedStyle(this).opacity;
+				this.style.opacity = 0;
+				setTimeout(function () {
+					element.src = nextSrc;
+		
+					// Enable CSS3 transition
+					element.style.transition = "all 250ms ease-in";
+					element.style.opacity = 1;
+									
+					// Bind new tutorial slide
+					switchTutorial(nextId);
+				}, 250);
 			} else {
-				this.parentNode.removeChild(this);
-				bindWindow();
+				var toremove = this;
+				this.style.opacity = 0;
+				window.getComputedStyle(this).opacity;
+				setTimeout(function () {
+					toremove.parentNode.removeChild(toremove);
+					bindWindow();
+				}, 250);
 			}
 		});
 	}
@@ -1573,6 +1614,11 @@ function showHelp() {
       });
     }, false);
   }
+  
+  // Enable CSS3 transition
+	document.getElementById("container").style.opacity = 0;
+  window.getComputedStyle(document.getElementById("container")).opacity;
+  document.getElementById("container").style.opacity = 1;
 }
 
 function switchOptions() {
@@ -1606,7 +1652,7 @@ function showOptions() {
   document.getElementById("scroller").style.height = "487px";
 
   document.getElementById("optionsclearhistory").addEventListener("click", function() {
-    HistoryData.length = 0;
+    HistoryData = [];
     pushData(HistoryDataName, HistoryData, "local", "History saved.");
   }, false);
   document.getElementById("optionssubmit").addEventListener("click", function() {
@@ -1632,8 +1678,12 @@ function showOptions() {
 
     background.pushData("PrivacyOptions", PTOptions, "sync", "Options saved.");
     document.getElementById("scroller").innerHTML += "Options saved.";
-    switchCurrent();
   }, false);
+  
+  // Enable CSS3 transition
+	document.getElementById("container").style.opacity = 0;
+  window.getComputedStyle(document.getElementById("container")).opacity;
+  document.getElementById("container").style.opacity = 1;
 }
 
 function switchAbout() {
@@ -1665,4 +1715,9 @@ function showAbout() {
       });
     }, false);
   }
+  
+  // Enable CSS3 transition
+	document.getElementById("container").style.opacity = 0;
+  window.getComputedStyle(document.getElementById("container")).opacity;
+  document.getElementById("container").style.opacity = 1;
 }

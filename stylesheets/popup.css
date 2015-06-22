@@ -527,6 +527,7 @@ body {
   padding: 0.3em;
   font-family: "Content";
   text-align: justify;
+  transition: opacity 500ms;
 }
 
 #container .title {
@@ -541,6 +542,7 @@ body {
   overflow-x: hidden;
   overflow-y: auto;
   height: 442px;
+  transition: opacity 500ms;
 }
 
 #scroller::-webkit-scrollbar {
@@ -583,6 +585,7 @@ body {
 	z-index: 1000;
 	width: 100%;
 	height: 100%;
+	transition: all 500ms ease-in;
 }
 
 #footer {
