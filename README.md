@@ -10,7 +10,7 @@ PrivacyTracker is a user-centered browser plugin to help you understand online t
 
 ### Installation
 1. Open Google Chrome
-2. Download the [PrivacyTracker CRX file](https://github.com/fishdev/PrivacyTracker/releases/download/v0.4/PrivacyTracker.v0.4.crx)
+2. Download the [PrivacyTracker CRX file](https://github.com/fishdev/PrivacyTracker/releases/download/v0.5/PrivacyTracker.v0.5.crx)
 3. Go to [chrome://extensions](chrome://extensions)
 4. Drag the PrivacyTracker CRX file from the downloads bar at the bottom of the window into the center of the page
 7. Accept permissions for PrivacyTracker
