@@ -264,10 +264,11 @@ function getDMOZ(domain) {
 	encloutrequest.open("GET", "http://enclout.com/api/v1/dmoz/show.json?auth_token=e2zFHvVw12-mkof5Ja5x&url=" + domain, false);
 	encloutrequest.send();
 	var encloutxml = encloutrequest.responseText;
-	if(encloutxml=="" || encloutxml==null || encloutrequestxml["dmoz_categories"]==null || encloutrequestxml["dmoz_categories"]=="") {
-		return null;
-	}
 	var encloutrequestxml = JSON.parse(encloutxml);
+	
+	if(encloutxml=="" || encloutxml==null || encloutrequestxml["dmoz_categories"]==null || encloutrequestxml["dmoz_categories"]=="") {
+		return;
+	}
 	
 	// Parse highest-level category string
   if(encloutrequestxml["dmoz_categories"][0].Category!="NOT_FOUND") {
