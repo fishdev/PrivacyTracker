@@ -1345,10 +1345,13 @@ function getHeaders() {
     if(ExtensionData[i].id==historyEntryId && background.getTrackerTitle(background.getDomain(ExtensionData[i].url), false) != currentTitle) {
       sortHeader(i);
     }
-
-    // Check if headers are for a different history entry and stop and stop if so
-    if(ExtensionData[i].id!=historyEntryId) {
-      break;
+		
+		// Check if the headers are more than a day old and stop
+    var today = new Date();
+    if(background.historySearch(ExtensionData[i].id)!="" && background.historySearch(ExtensionData[i].id)!=null) {
+      if(getDayDiff(today, new Date(background.historySearch(ExtensionData[i].id).year, background.historySearch(ExtensionData[i].id).month, background.historySearch(ExtensionData[i].id).day))>1) {
+        return;
+      }
     }
   }
   
