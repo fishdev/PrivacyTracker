@@ -16,8 +16,5 @@ PrivacyTracker is a user-centered browser plugin to help you understand online t
 7. Accept permissions for PrivacyTracker
 8. Done. Now you can protect your data with PrivacyTracker!
 
-### Development
-I am currently in the process of developing PrivacyTracker. It is mostly feature-complete, but there may be various bugs throughout the software and some things simply may not work. If you have any contributions, feel free to make a pull request.
-
 ### License
 PrivacyTracker is available under the [GNU General Public License (v2)](https://tldrlegal.com/license/gnu-general-public-license-v2). If you are forking PrivacyTracker, you *must* include the original source, include the original license, and state all changes you make.
