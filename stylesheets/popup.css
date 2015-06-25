@@ -226,7 +226,6 @@ body {
   color: #444444;
   cursor: default;
   overflow: hidden;
-  transition: max-height 250ms ease-in;
 }
 
 .trackerinfo {
@@ -237,7 +236,7 @@ body {
   color: #444444;
   cursor: default;
   overflow: hidden;
-  transition: max-height 250ms ease-in;
+  transition: max-height 2s ease-in;
 }
 
 .trackerinfo a {

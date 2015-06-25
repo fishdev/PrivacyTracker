@@ -759,6 +759,7 @@ function colorSortNum(categoryid) {
 
 function showCurrentSort(sortid) {
   // Change arrow style and perform actions
+  var sortmaxheight;
   var sortitemarrow = document.getElementById(sortid + "arrow").className;
   if(sortitemarrow=="arrow-right") {
     document.getElementById(sortid + "arrow").className = "arrow-down";
@@ -770,18 +771,21 @@ function showCurrentSort(sortid) {
       case "trackers":
         // Add trackers description
         sortHTML += "<div id='" + sortid + "info' class='sortinfo'><div class='textdescription'><div class='text'>These are the websites that are connected to this page for the sole purpose of gathering your usage activity and performing analytics on your data.</div></div>" + TrackingHeaderArray.html + "</div>";
+        sortmaxheight = TrackingHeaderArray.count;
         break;
 
       // Advertising
       case "advertising":
         // Add advertising description
         sortHTML += "<div id='" + sortid + "info' class='sortinfo'><div class='textdescription'><div class='text'>These companies are targeting ads at you through this page based on your activity across the web.</div></div>" + AdvertisingHeaderArray.html + "</div>";
+        sortmaxheight = AdvertisingHeaderArray.count;
         break;
 
       // Social
       case "social":
         // Add social description
         sortHTML += "<div id='" + sortid + "info' class='sortinfo'><div class='textdescription'><div class='text'>These are social networks connected to this page, often so you can like or follow this page.</div></div>" + SocialHeaderArray.html + "</div>";
+        sortmaxheight = SocialHeaderArray.count;
         break;
 
       // Page Content
@@ -790,9 +794,10 @@ function showCurrentSort(sortid) {
         if((MainHeaders.length + ImageHeaders.length + ScriptHeaders.length + StylesheetHeaders.length)==0) {
           sortHTML += "<div class='checkcirclesurroundings'><div class='checkcircle'>&#x2713</div><div class='leftofcheckcircle'>This page has no external websites that make it work properly.&nbsp;&nbsp</div></div>";
         } else {
-        // Add pagecontent description
+        	// Add pagecontent description
           sortHTML += "<div id='" + sortid + "info' class='sortinfo'><div class='textdescription'><div class='text'>These websites know about your visit to this page because they provide content such as images, layout, and more that makes the page work properly.</div></div>";
         }
+        sortmaxheight = 2;
 
         // Add pagecontent categories
         if(MainHeaderArray.count>0) {
@@ -851,18 +856,26 @@ function showCurrentSort(sortid) {
       // Main Content
       case "pagecontentmain":
         sortHTML = "<div id='" + sortid + "info' class='sortinfo'>" + MainHeaderArray.html + "</div>";
+        sortmaxheight = MainHeaderArray.count;
+        document.getElementById("pagecontentinfo").style.maxHeight = parseInt(document.getElementById("pagecontentinfo").style.maxHeight) + (sortmaxheight * 46) + 100;
         break;
       // Images
       case "pagecontentimages":
         sortHTML = "<div id='" + sortid + "info' class='sortinfo'>" + ImageHeaderArray.html + "</div>";
+        sortmaxheight = ImageHeaderArray.count;
+        document.getElementById("pagecontentinfo").style.maxHeight = parseInt(document.getElementById("pagecontentinfo").style.maxHeight) + (sortmaxheight * 46) + 100;
         break;
       // Scripts
       case "pagecontentscripts":
         sortHTML = "<div id='" + sortid + "info' class='sortinfo'>" + ScriptHeaderArray.html + "</div>";
+        sortmaxheight = ScriptHeaderArray.count;
+        document.getElementById("pagecontentinfo").style.maxHeight = parseInt(document.getElementById("pagecontentinfo").style.maxHeight) + (sortmaxheight * 46) + 100;
         break;
       // Stylesheets
       case "pagecontentstylesheets":
         sortHTML = "<div id='" + sortid + "info' class='sortinfo'>" + StylesheetHeaderArray.html + "</div>";
+        sortmaxheight = StylesheetHeaderArray.count;
+        document.getElementById("pagecontentinfo").style.maxHeight = parseInt(document.getElementById("pagecontentinfo").style.maxHeight) + (sortmaxheight * 46) + 100;
         break;
     }
 
@@ -900,13 +913,18 @@ function showCurrentSort(sortid) {
     // Enable CSS3 transition
     document.getElementById(sortid + "info").style.maxHeight = "0px";
     window.getComputedStyle(document.getElementById(sortid + "info")).maxHeight;
-    document.getElementById(sortid + "info").style.maxHeight = "600px";
+    document.getElementById(sortid + "info").style.maxHeight = (sortmaxheight * 46) + 100;
     document.getElementById(sortid + "info").style.transition = "max-height 250ms ease-out";
   } else {
     document.getElementById(sortid + "arrow").className = "arrow-right";
+    
+    if(document.getElementById(sortid).parentNode.id=="pagecontentinfo") {
+    	document.getElementById(sortid).parentNode.style.maxHeight = parseInt(document.getElementById(sortid).parentNode.style.maxHeight) - (parseInt(window.getComputedStyle(document.getElementById(sortid + "info")).height) + 15);
+  	}
 
     // Hide extended information
     var sortiteminfotoremove = document.getElementById(sortid + "info");
+
     sortiteminfotoremove.style.maxHeight = "0px";
     window.getComputedStyle(sortiteminfotoremove).maxHeight;
     setTimeout(function () {
@@ -1196,8 +1214,14 @@ function showCurrentTracker(typedomain) {
     window.getComputedStyle(document.getElementById(typedomain + "-info")).maxHeight;
     document.getElementById(typedomain + "-info").style.maxHeight = "600px";
     document.getElementById(typedomain + "-info").style.transition = "max-height 250ms ease-out";
+    
+    setTimeout(function() {
+    	document.getElementById(typedomain).parentNode.style.maxHeight = parseInt(document.getElementById(typedomain).parentNode.style.maxHeight) + parseInt(window.getComputedStyle(document.getElementById(typedomain + "-info")).height) + 15;
+    }, 251);
   } else {
     document.getElementById(typedomain + "-arrow").className = "arrow-right-r";
+    
+    document.getElementById(typedomain).parentNode.style.maxHeight = parseInt(document.getElementById(typedomain).parentNode.style.maxHeight) - (parseInt(window.getComputedStyle(document.getElementById(typedomain + "-info")).height) + 15);
 
     // Hide expanded tracker details
     var trackerinfotoremove = document.getElementById(typedomain + "-info");

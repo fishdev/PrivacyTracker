@@ -114,7 +114,8 @@
     "hitbox.com",
     "omniture.com",
     "omtrdc.net",
-    "touchclarity.com"
+    "touchclarity.com",
+    "typekit.net"
   ]}},
   {"AdOcean": {"http://www.adocean-global.com/": [
     "adocean-global.com", "adocean.pl"
@@ -486,7 +487,7 @@
   {"DoublePositive": {"http://www.doublepositive.com/": [
     "bid-tag.com", "doublepositive.com"
   ]}},
-  {"DoubleClick": {"http://doubleclick.net/": ["doubleclick.net"]}},
+  {"DoubleClick": {"http://doubleclick.net/": ["doubleclick.net", "2mdn.net"]}},
   {"DoubleVerify": {"http://www.doubleverify.com/": ["doubleverify.com"]}},
   {"Drawbridge": {"http://http://drawbrid.ge/": [
     "adsymptotic.com", "drawbrid.ge"
@@ -850,7 +851,7 @@
     "maxpointinteractive.com", "maxusglobal.com", "mxptint.net"
   ]}},
   {"MdotM": {"http://mdotm.com/": ["mdotm.com"]}},
-  {"media.net": {"http://www.media.net/": ["media.net"]}},
+  {"media.net": {"http://www.media.net/": ["media.net", "mnet-ad.net"]}},
   {"MediaBrix": {"http://www.mediabrix.com/": ["mediabrix.com"]}},
   {"MediaCom": {"http://www.mediacom.com/": ["mediacom.com"]}},
   {"mediaFORGE": {"http://www.mediaforge.com/": ["mediaforge.com"]}},
@@ -1188,6 +1189,7 @@
   ]}},
   {"SocialTwist": {"http://tellafriend.socialtwist.com/": ["socialtwist.com"]}},
   {"sociomantic labs": {"http://www.sociomantic.com/": ["sociomantic.com"]}},
+  {"Sonobi": {"https://sonobi.com/": ["sonobi.com"]}},
   {"sophus3": {"http://www.sophus3.com/": ["sophus3.co.uk", "sophus3.com"]}},
   {"Space Chimp Media": {"http://spacechimpmedia.com/": [
     "spacechimpmedia.com"
@@ -1483,6 +1485,7 @@
   {"Awio": {"http://www.awio.com/": [
     "awio.com", "w3counter.com", "w3roi.com"
   ]}},
+  {"Bambora": {"http://bambora.com": ["bambora.com", "ml314.com"]}},
   {"Belstat": {"http://www.belstat.com/": [
     "belstat.be", "belstat.com", "belstat.de", "belstat.fr", "belstat.nl"
   ]}},
@@ -1614,7 +1617,7 @@
   {"Net Applications": {"http://www.netapplications.com/": [
     "hitsprocessor.com", "netapplications.com"
   ]}},
-  {"New Relic": {"http://newrelic.com/": ["newrelic.com"]}},
+  {"New Relic": {"http://newrelic.com/": ["newrelic.com", "nr-data.net"]}},
   {"NewsRight": {"http://www.newsright.com/": ["apnewsregistry.com"]}},
   {"NextSTAT": {"http://www.nextstat.com/": ["nextstat.com"]}},
   {"Nielsen": {"http://www.nielsen.com/": [
@@ -1699,6 +1702,7 @@
   {"Webtrends": {"http://webtrends.com/": [
     "reinvigorate.net", "webtrends.com", "webtrendslive.com"
   ]}},
+  {"Wistia": {"http://wistia.com/": ["wistia.com", "wistia.net"]}},
   {"whos.amung.us": {"http://whos.amung.us/": ["amung.us"]}},
   {"Woopra": {"http://www.woopra.com/": ["woopra-ns.com", "woopra.com"]}},
   {"WOW Analytics": {"http://www.wowanalytics.co.uk/": ["wowanalytics.co.uk"]}},
@@ -2065,6 +2069,7 @@
   {"HubSpot": {"http://www.hubspot.com/": ["hubspot.com"]}},
   {"iovation": {"http://www.iovation.com/": ["iesnare.com", "iovation.com"]}},
   {"Kaltura": {"http://corp.kaltura.com/": ["kaltura.com"]}},
+  {"Kargo": {"http://www.kargo.com/": ["kargo.com"]}},
   {"kikin": {"http://www.kikin.com/": ["kikin.com"]}},
   {"Limelight Networks": {"http://www.limelight.com/": [
     "clickability.com", "limelight.com", "llnwd.net"
@@ -2111,11 +2116,13 @@
     "blaze.com", "oberon-media.com"
   ]}},
   {"Olark": {"http://www.olark.com/": ["olark.com"]}},
+  {"Ookla": {"http://ookla.com/": ["ookla.com", "speedtest.net", "netindex.com"]}},
   {"Ooyala": {"http://www.ooyala.com/": ["oo4.com", "ooyala.com"]}},
   {"Optimizely": {"https://www.optimizely.com/": ["optimizely.com"]}},
   {"Oracle": {"http://www.oracle.com/": [
     "atgsvcs.com", "instantservice.com", "istrack.com", "oracle.com"
   ]}},
+  {"pair Networks": {"http://www.pair.com/": ["pair.com"]}},
   {"Parse.ly": {"http://parsely.com/": ["parsely.com"]}},
   {"Peerius": {"http://www.peerius.com/": ["peerius.com"]}},
   {"Pinterest": {"http://pinterest.com/": ["pinterest.com"]}},
@@ -2152,6 +2159,7 @@
   {"Usability Sciences": {"http://www.usabilitysciences.com/": [
     "usabilitysciences.com", "webiqonline.com"
   ]}},
+  {"Usabilla": {"https://www.usabilla.com/": ["usabilla.com"]}},
   {"UserVoice": {"http://www.uservoice.com/": ["uservoice.com"]}},
   {"Vertical Acuity": {"http://www.verticalacuity.com/": [
     "verticalacuity.com"
@@ -2167,6 +2175,7 @@
   ]}},
   {"Visual Revenue": {"http://visualrevenue.com/": ["visualrevenue.com"]}},
   {"Voice2Page": {"http://www.voice2page.com/": ["voice2page.com"]}},
+  {"Vox Media": {"http://voxmedia.com/": ["vox.com", "voxmedia.com", "theverge.com", "eater.com", "vox-cdn.com", "sbnation.com", "curbed.com", "polygon.com", "racked.com"]}},
   {"WebsiteAlive": {"http://www.websitealive.com/": [
     "websitealive.com",
     "websitealive0.com",
@@ -2254,6 +2263,8 @@
     "stumble-upon.com", "stumbleupon.com"
   ]}},
   {"Twitter": {"http://twitter.com/": ["twitter.com", "t.co", "twittercounter.com"]}},
-  {"VKontakte": {"http://vk.com/": ["userapi.com", "vk.com", "vkontakte.ru"]}}
+  {"VKontakte": {"http://vk.com/": ["userapi.com", "vk.com", "vkontakte.ru"]}},
+  {"Ziff Davis": {"http://www.ziffdavis.com/": ["ziffdavis.com", "zdbb.net"]}},
+  {"Zoom Internet": {"http://zoominternet.net/": ["zoominternet.net", "armstrongonewire.com"]}}
 ]
 }
