@@ -1,30 +1,73 @@
----
-layout: null
----
 <?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>{{ site.title | xml_escape }}</title>
-    <description>{{ site.description | xml_escape }}</description>
-    <link>{{ site.url }}/</link>
-    <atom:link href="{{ "/feed.xml" }}" rel="self" type="application/rss+xml" />
-    <pubDate>{{ site.time | date_to_rfc822 }}</pubDate>
-    <lastBuildDate>{{ site.time | date_to_rfc822 }}</lastBuildDate>
-    <generator>Jekyll v{{ jekyll.version }}</generator>
-    {% for post in site.posts limit:10 %}
+    <title>PrivacyTracker</title>
+    <description>A user-centered browsing plugin design to understand online tracking, helping you find out who&#39;s stalking you on the web</description>
+    <link>https://fishdev.github.io/PrivacyTracker/</link>
+    <atom:link href="/feed.xml" rel="self" type="application/rss+xml" />
+    <pubDate>Fri, 26 Jun 2015 09:57:26 -0400</pubDate>
+    <lastBuildDate>Fri, 26 Jun 2015 09:57:26 -0400</lastBuildDate>
+    <generator>Jekyll v2.4.0</generator>
+    
       <item>
-        <title>{{ post.title | xml_escape }}</title>
-        <description>{{ post.description | xml_escape }}</description>
-        <pubDate>{{ post.date | date_to_rfc822 }}</pubDate>
-        <link>{{ post.url | prepend: site.url }}</link>
-        <guid isPermaLink="true">{{ post.url | prepend: site.url }}</guid>
-        {% for tag in post.tags %}
-        <category>{{ tag | xml_escape }}</category>
-        {% endfor %}
-        {% for cat in post.categories %}
-        <category>{{ cat | xml_escape }}</category>
-        {% endfor %}
+        <title>What It Does</title>
+        <description>PrivacyTracker is a user-centered browser plugin to help you understand online tracking. It provides an intuitive interface to easily understand how your data is being collected by third parties across the Internet and allows you to quickly block companies that you don&#39;t want to share your data with. While existing privacy tools only provide unintelligible, generic information, PrivacyTracker personalizes information about tracking based on your browsing activity.</description>
+        <pubDate>Fri, 18 Jul 2014 00:00:00 -0400</pubDate>
+        <link>https://fishdev.github.io/PrivacyTracker/2014/07/18/project-1/</link>
+        <guid isPermaLink="true">https://fishdev.github.io/PrivacyTracker/2014/07/18/project-1/</guid>
+        
+        
       </item>
-    {% endfor %}
+    
+      <item>
+        <title>Easy As Pie!</title>
+        <description>PrivacyTracker boasts an intuitive, hassle-free interface. Everything you want to do is just a click away, and there are no confusing menus or dialogs. All of PrivacyTracker&#39;s functionality is efficiently organized into easily accessible sections, which are seamlessly loaded when you want them. In addition, PrivacyTracker launches a wonderful tutorial the first time you use it, explaining exactly how to use it and where everything is. There are helpful descriptions of the tracking ecosystem throughout the interface, without any meaningless jargon. And, perhaps most importantly, PrivacyTracker looks really good, drawing you in to use it. Window elements load quickly, but with subtle transitions, and information slides in and out of your view to provide a crucial sense of context in the interface. Overall, PrivacyTracker&#39;s excellent design allows you to learn about a complex topic and take action without unnecessary confusion, all wrapped in a beautiful package.</description>
+        <pubDate>Thu, 17 Jul 2014 00:00:00 -0400</pubDate>
+        <link>https://fishdev.github.io/PrivacyTracker/2014/07/17/project-2/</link>
+        <guid isPermaLink="true">https://fishdev.github.io/PrivacyTracker/2014/07/17/project-2/</guid>
+        
+        
+      </item>
+    
+      <item>
+        <title>Personalized Tracking Information</title>
+        <description>Other Chrome extensions that claim to help you block online trackers merely show you generic information about companies that was pulled straight out of a huge database. They don&#39;t tell you why it all matters to &lt;i&gt;you&lt;/i&gt;. PrivacyTracker is different. It shows you all the things that a tracking company knows about &lt;i&gt;you&lt;/i&gt; and what they&#39;ll do with the information. If you want them to continue spying on you, let them be, and if you don&#39;t, hit the giant switch to block them! It&#39;s really that simple. With PrivacyTracker, all you have to do is decide if you want x company to know a, b, c about you. While other tools make you look up each company that&#39;s tracking you, PrivacyTracker personalizes the entire experience to you.</description>
+        <pubDate>Wed, 16 Jul 2014 00:00:00 -0400</pubDate>
+        <link>https://fishdev.github.io/PrivacyTracker/2014/07/16/project-3/</link>
+        <guid isPermaLink="true">https://fishdev.github.io/PrivacyTracker/2014/07/16/project-3/</guid>
+        
+        
+      </item>
+    
+      <item>
+        <title>Block Trackers</title>
+        <description>One of the most important things PrivacyTracker does is completely block trackers, preventing them from collecting &lt;b&gt;any&lt;/b&gt; data about you. If you choose, PrivacyTracker adds a tracking company to a blacklist that causes it to be disabled at the deepest level technically possible. With this system, the tracker will have literally zero information about your activity on the web. Also, it&#39;s easy to block trackers - all you have to do is flip a switch!&lt;br&gt;&lt;br&gt;Blocking trackers often keeps your personal data out of the wrong hands, preventing serious issues such as phishing attacks and identity theft. Since there aren&#39;t as many companies handling your information, it&#39;s less likely to get stolen or be misused. Instead, it&#39;s safe and secure.</description>
+        <pubDate>Tue, 15 Jul 2014 00:00:00 -0400</pubDate>
+        <link>https://fishdev.github.io/PrivacyTracker/2014/07/15/project-4/</link>
+        <guid isPermaLink="true">https://fishdev.github.io/PrivacyTracker/2014/07/15/project-4/</guid>
+        
+        
+      </item>
+    
+      <item>
+        <title>Data About Tracking Prior to Installation</title>
+        <description>As you&#39;re reading this now, there are probably dozens of companies that are tracking you across all the pages you visited today. But if you don&#39;t have PrivacyTracker installed, you have no way of telling which companies are collecting your data. So, you might think that PrivacyTracker will only show you who&#39;s tracking you after you install it. Wrong! PrivacyTracker actually goes back in time and tells you which trackers gathered information about you since you last cleared your browsing history (which might be when you installed Chrome).</description>
+        <pubDate>Mon, 14 Jul 2014 00:00:00 -0400</pubDate>
+        <link>https://fishdev.github.io/PrivacyTracker/2014/07/14/project-5/</link>
+        <guid isPermaLink="true">https://fishdev.github.io/PrivacyTracker/2014/07/14/project-5/</guid>
+        
+        
+      </item>
+    
+      <item>
+        <title>Intuitive Customization</title>
+        <description>Without being overwhelming, PrivacyTracker offers just the right number of options to suit everyone. If you&#39;re like most people, you&#39;ll never have to see the options section, but if you want to dig into the technical details of how you&#39;re being tracked, we provide the perfect tools to do just that.</description>
+        <pubDate>Sun, 13 Jul 2014 00:00:00 -0400</pubDate>
+        <link>https://fishdev.github.io/PrivacyTracker/2014/07/13/project-6/</link>
+        <guid isPermaLink="true">https://fishdev.github.io/PrivacyTracker/2014/07/13/project-6/</guid>
+        
+        
+      </item>
+    
   </channel>
 </rss>
