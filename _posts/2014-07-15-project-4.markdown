@@ -1,0 +1,10 @@
+---
+layout: default
+modal-id: 4
+title: Block Trackers
+img: block-error.png
+mainimg: block-safe.png
+alt: PrivacyTracker disables tracking companies
+description: One of the most important things PrivacyTracker does is completely block trackers, preventing them from collecting <b>any</b> data about you. If you choose, PrivacyTracker adds a tracking company to a blacklist that causes it to be disabled at the deepest level technically possible. With this system, the tracker will have literally zero information about your activity on the web. Also, it's easy to block trackers - all you have to do is flip a switch!<br><br>Blocking trackers often keeps your personal data out of the wrong hands, preventing serious issues such as phishing attacks and identity theft. Since there aren't as many companies handling your information, it's less likely to get stolen or be misused. Instead, it's safe and secure.
+
+---

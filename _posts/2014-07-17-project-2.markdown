@@ -1,0 +1,10 @@
+---
+layout: default
+modal-id: 2
+title: Easy As Pie!
+img: easy-pie.png
+mainimg: easy-interface.png
+alt: An intuitive, easy-to-use interface
+description: PrivacyTracker boasts an intuitive, hassle-free interface. Everything you want to do is just a click away, and there are no confusing menus or dialogs. All of PrivacyTracker's functionality is efficiently organized into easily accessible sections, which are seamlessly loaded when you want them. In addition, PrivacyTracker launches a wonderful tutorial the first time you use it, explaining exactly how to use it and where everything is. There are helpful descriptions of the tracking ecosystem throughout the interface, without any meaningless jargon. And, perhaps most importantly, PrivacyTracker looks really good, drawing you in to use it. Window elements load quickly, but with subtle transitions, and information slides in and out of your view to provide a crucial sense of context in the interface. Overall, PrivacyTracker's excellent design allows you to learn about a complex topic and take action without unnecessary confusion, all wrapped in a beautiful package.
+
+---
