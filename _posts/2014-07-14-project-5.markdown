@@ -1,0 +1,10 @@
+---
+layout: default
+modal-id: 5
+title: Data About Tracking Prior to Installation
+img: import-transfer.png
+mainimg: import-transfer.png
+alt: PrivacyTracker determines who tracked you even before you installed it
+description: As you're reading this now, there are probably dozens of companies that are tracking you across all the pages you visited today. But if you don't have PrivacyTracker installed, you have no way of telling which companies are collecting your data. So, you might think that PrivacyTracker will only show you who's tracking you after you install it. Wrong! PrivacyTracker actually goes back in time and tells you which trackers gathered information about you since you last cleared your browsing history (which might be when you installed Chrome).
+
+---
