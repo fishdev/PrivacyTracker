@@ -1,7 +1,10 @@
 # Site settings
 title: PrivacyTracker
+email: fishdev@github.com
 url: https://fishdev.github.io/PrivacyTracker
 description: "A user-centered browsing plugin design to understand online tracking, helping you find out who's stalking you on the web"
+github_username: fishdev
+baseurl: /PrivacyTracker
 
 # Contact form: comment the line below if you want to stick with the default PHP contact form
 contact: static
